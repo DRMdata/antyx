@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+venv/
+.DS_Store
+.idea/
+
+*.ipynb
+
+code_start_py
+
+pypi.md

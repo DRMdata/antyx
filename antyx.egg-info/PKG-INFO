@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: antyx
+Version: 0.1.1
+Summary: Paquete para análisis exploratorio de datos
+Home-page: https://github.com/drmdata/antyx
+Author: Daniel Rodrigálvarez Morente
+Author-email: drm.datos@email.com
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: numpy>=1.24.0
+Dynamic: author
+Dynamic: author-email
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

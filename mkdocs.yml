@@ -1,0 +1,6 @@
+site_name: Antyx Documentation
+theme: readthedocs
+nav:
+  - Home: index.md
+  - Getting Started: getting-started/installation.md
+  - API Reference: api-reference/core.md
