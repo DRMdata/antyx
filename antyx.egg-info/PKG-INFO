@@ -1,18 +1,13 @@
 Metadata-Version: 2.4
 Name: antyx
-Version: 0.1.1
-Summary: Paquete para análisis exploratorio de datos
+Version: 0.1.3
+Summary: Antyx is an automated EDA engine designed to generate fast, structured and professional exploratory reports from any tabular dataset.
 Home-page: https://github.com/drmdata/antyx
 Author: Daniel Rodrigálvarez Morente
 Author-email: drm.datos@email.com
-Requires-Python: >=3.8
 Description-Content-Type: text/markdown
-Requires-Dist: seaborn
-Requires-Dist: seaborn
 Dynamic: author
 Dynamic: author-email
 Dynamic: description-content-type
 Dynamic: home-page
-Dynamic: requires-dist
-Dynamic: requires-python
 Dynamic: summary

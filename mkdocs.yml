@@ -1,6 +1,25 @@
-site_name: Antyx Documentation
-theme: readthedocs
+site_name: Antix Documentation
 nav:
   - Home: index.md
-  - Getting Started: getting-started/installation.md
-  - API Reference: api-reference/core.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+  - Principals:
+     - data_loader: principals/data_loader.md
+     - report: principals/report.md
+  - Utils:
+     - correlations: utils/correlations.md
+     - outliers: utils/outliers.md
+     - summary: utils/summary.md
+     - visualizations: utils/visualizations.md
+
+theme:
+  name: material
+
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_root_heading: true
+          paths: [../antyx]

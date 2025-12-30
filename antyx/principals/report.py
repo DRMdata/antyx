@@ -63,7 +63,7 @@ class EDAReport:
         <html>
         <head>
             <meta charset="UTF-8">
-            <title>AutoEDA / {os.path.basename(self.file_path)}</title>
+            <title>Antyx / {os.path.basename(self.file_path)}</title>
             <style>
                 body {{
                     font-family: Arial, Helvetica, sans-serif;
@@ -260,7 +260,7 @@ class EDAReport:
             </script>
         </head>
         <body>
-            <h1>Auto Exploratory Data Analysis</h1>
+            <h1>Exploratory Data Analysis with Antyx</h1>
             <div class="container">
                 <div class="file-info">
                     <p><strong>File:</strong> {os.path.basename(self.file_path)}</p>
@@ -271,7 +271,7 @@ class EDAReport:
                     <div class="tab-link active" onclick="openTab(event, 'desc')">Summary</div>
                     <div class="tab-link" onclick="openTab(event, 'outliers')">Outliers</div>
                     <div class="tab-link" onclick="openTab(event, 'corr')">Correlations</div>
-                    <div class="tab-link" onclick="openTab(event, 'viz')">Visualisations</div>
+                    <div class="tab-link" onclick="openTab(event, 'viz')">Visualizations</div>
                 </div>
                 <div id="desc" class="tab-content active">{describe_data(self.df)}</div>
                 <div id="outliers" class="tab-content">{detect_outliers(self.df)}</div>

@@ -1,17 +1,18 @@
-# Welcome to MkDocs
+# Documentation
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+This section documents the main modules of **Antix**, organized into:
 
-## Commands
+## Principals
+Core modules
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+- [data_loader](principals/data_loader.md)
+- [report](principals/report.md)
 
-## Project layout
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Utils
+Utilities and advanced analysis
+
+- [correlations](utils/correlations.md)
+- [outliers](utils/outliers.md)
+- [summary](utils/summary.md)
+- [visualizations](utils/visualizations.md)

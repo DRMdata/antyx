@@ -4,7 +4,6 @@ antyx/__init__.py
 antyx.egg-info/PKG-INFO
 antyx.egg-info/SOURCES.txt
 antyx.egg-info/dependency_links.txt
-antyx.egg-info/requires.txt
 antyx.egg-info/top_level.txt
 antyx/principals/__init__.py
 antyx/principals/data_loader.py
