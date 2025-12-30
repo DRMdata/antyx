@@ -1,9 +1,0 @@
-README.md
-setup.py
-antix/__init__.py
-antix.egg-info/PKG-INFO
-antix.egg-info/SOURCES.txt
-antix.egg-info/dependency_links.txt
-antix.egg-info/requires.txt
-antix.egg-info/top_level.txt
-tests/test_core.py
