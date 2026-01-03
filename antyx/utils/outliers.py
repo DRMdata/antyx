@@ -1,8 +1,9 @@
-import base64
 from io import BytesIO
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import base64
+
 
 def detect_outliers(df):
     """Generates a visualizations of the DataFrame.
@@ -14,25 +15,31 @@ def detect_outliers(df):
         Visualizations of the DataFrame.
     """
     numeric = df.select_dtypes(include='number')
-    num_vars = numeric.shape[1]
-    cols = 4
-    rows = (num_vars + cols - 1) // cols
-    palette = sns.color_palette("Set2", num_vars)
 
+    num_vars = numeric.shape[1]
+
+    if num_vars == 0:
+        return "<p><strong>There are no numerical variables to detect outliers.</strong></p>"
+
+    cols = 4
+    rows = max(1, (num_vars + cols - 1) // cols)
+    palette = sns.color_palette("Set2", num_vars)
     fig, axes = plt.subplots(rows, cols, figsize=(cols * 5, rows * 3.5))
     axes = axes.flatten()
 
-    fig.suptitle("Nota: Outliers detectados según el criterio de Tukey (1.5 × IQR)", fontsize=11, ha='left', x=0.01)
+    fig.suptitle("Note: Outliers detected according to Tukey's criterion (1.5 × IQR)", fontsize=11, ha='left', x=0.01)
 
     for i, column in enumerate(numeric.columns):
         data = numeric[column]
         stats = data.describe()
+
         q1 = stats['25%']
         q3 = stats['75%']
         iqr = q3 - q1
         lower = q1 - 1.5 * iqr
         upper = q3 + 1.5 * iqr
         median = stats['50%']
+
         outliers = data[(data < lower) | (data > upper)]
         outliers_pct = len(outliers) / len(data) * 100
 
@@ -43,6 +50,7 @@ def detect_outliers(df):
         ax.set_title(column, fontsize=12, fontweight='bold')
         ax.set_ylabel('')
         ax.set_yticks([])
+
         for spine in ax.spines.values():
             spine.set_visible(False)
 
@@ -60,10 +68,16 @@ def detect_outliers(df):
     for j in range(i + 1, len(axes)):
         fig.delaxes(axes[j])
 
+    # Hide or remove excess axes
+   # for j in range(i +1, len(axes)):
+    #    fig.delaxes(axes[j])
+
     plt.tight_layout(rect=[0, 0, 1, 0.95])
 
+    # Export to base64
     buf = BytesIO()
     fig.savefig(buf, format='png', dpi=120)
     buf.seek(0)
     encoded = base64.b64encode(buf.read()).decode('utf-8')
+
     return f'<img src="data:image/png;base64,{encoded}"/>'

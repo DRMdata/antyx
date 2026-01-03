@@ -3,6 +3,7 @@ import seaborn as sns
 import base64
 from io import BytesIO
 
+
 def basic_visuals(df):
     """Generates a visualisations of the DataFrame.
 
@@ -14,7 +15,7 @@ def basic_visuals(df):
     """
     numeric = df.select_dtypes(include='number')
     if numeric.shape[1] == 0:
-        return "<p><strong>Visualizaciones:</strong> No hay columnas numéricas para graficar.</p>"
+        return "<p><strong>There are no numerical variables to display.</p>"
     try:
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.histplot(df.select_dtypes(include='number').iloc[:, 0], kde=True, ax=ax)
@@ -25,7 +26,7 @@ def basic_visuals(df):
         return f'<img src="data:image/png;base64,{encoded}"/>'
 
     except Exception as e:
-        return f"<p><strong>Error al generar visualizaciones:</strong> {str(e)}</p>"
+        return f"<p><strong>Error generating visualizations:</strong> {str(e)}</p>"
 
     '''
     Generar una línea de gráficos para cada variable y dependiendo del tipo de variable de que se trate

@@ -4,7 +4,8 @@ import os
 import chardet
 
 class DataLoader:
-    """Class for loading data from files in multiple formats (CSV, Excel, JSON, Parquet).
+    """
+    Class for loading data from files in multiple formats (CSV, Excel, JSON, Parquet).
 
     This class automatically detects the encoding (for text files),
     delimiter (for CSV), and loads the data into a pandas DataFrame.
@@ -22,7 +23,8 @@ class DataLoader:
     """
 
     def __init__(self, file_path):
-        """Initializes the data loader with the file path.
+        """
+        Initializes the data loader with the file path.
 
         Args:
             file_path (str): Path to the file to be loaded.
@@ -34,26 +36,30 @@ class DataLoader:
         self.skipped_lines = 0
 
     def _check_file_exists(self):
-        """Checks if the file exists at the specified path.
+        """
+        Checks if the file exists at the specified path.
 
         Raises:
             FileNotFoundError: If the file does not exist.
             ValueError: If the path is not a file.
         """
         if not os.path.exists(self.file_path):
-            raise FileNotFoundError(f"El archivo no existe en la ruta: {self.file_path}")
+            raise FileNotFoundError(f"The file does not exist in the path: {self.file_path}")
         if not os.path.isfile(self.file_path):
-            raise ValueError(f"La ruta no es un archivo: {self.file_path}")
+            raise ValueError(f"The route is not a file: {self.file_path}")
 
     def _detect_encoding(self):
-        """Detects the encoding of the file (for CSV/TXT files)."""
+        """
+        Detects the encoding of the file (for CSV/TXT files).
+        """
         with open(self.file_path, 'rb') as f:
             raw_data = f.read(10000)
             self.encoding = chardet.detect(raw_data)['encoding'] or 'utf-8'
-        print(f"Codificación detectada: {self.encoding}")
+        print(f"Encoding detected: {self.encoding}")
 
     def _detect_delimiter(self):
-        """Detects the delimiter for CSV files.
+        """
+        Detects the delimiter for CSV files.
 
         Returns:
             str: Detected delimiter (e.g., ',' or ';').
@@ -63,17 +69,21 @@ class DataLoader:
             f.seek(0)
             try:
                 dialect = csv.Sniffer().sniff(sample)
+                print(f"Delimiter detected: {dialect.delimiter}")
                 return dialect.delimiter
             except csv.Error:
+                print(f"Delimiter detected: ','")
                 return ','  # Default delimiter
 
     def _load_csv_or_txt(self):
-        """Loads CSV or TXT files into a DataFrame."""
+        """
+        Loads CSV or TXT files into a DataFrame.
+        """
         delimiter = self._detect_delimiter() if self.file_path.endswith('.csv') else '\t'
         self.df = pd.read_csv(
             self.file_path,
             encoding=self.encoding,
-            delimiter=delimiter,
+            sep=delimiter,
             on_bad_lines='skip',
             low_memory=False
         )
@@ -91,7 +101,8 @@ class DataLoader:
         self.df = pd.read_parquet(self.file_path)
 
     def load_data(self):
-        """Loads the file based on its format and returns a DataFrame.
+        """
+        Loads the file based on its format and returns a DataFrame.
 
         Returns:
             pd.DataFrame: DataFrame with the loaded data.
@@ -117,6 +128,7 @@ class DataLoader:
 
             self.skipped_lines = 0
             print(f"✅ File loaded successfully. Total lines: {len(self.df)}")
+
             return self.df
 
         except Exception as e:

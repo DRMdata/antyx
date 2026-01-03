@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def format_number(x):
     return f"{x:,.2f}" if pd.notnull(x) else ""
 
@@ -67,7 +68,7 @@ def describe_data(df):
             """
             non_numeric_rows.append(row)
 
-    # Encabezados
+    # Headers
     numeric_headers = [
         "Variable", "Type", "Non-null", "Nulls", "Unique",
         "Top", "Freq Top", "% Top", "Mean", "Std", "Var",
@@ -78,6 +79,7 @@ def describe_data(df):
         "Top", "Freq Top", "% Top"
     ]
 
+    # Data summary
     numeric_table = f"""
     <h2>Numerical data</h2>
     <table class="table-custom">

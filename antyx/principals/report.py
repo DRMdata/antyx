@@ -1,11 +1,13 @@
-import os
 import webbrowser
+import os
 
 from .data_loader import DataLoader
+from antyx.utils.lines import lines
 from antyx.utils.summary import describe_data
 from antyx.utils.outliers import detect_outliers
 from antyx.utils.correlations import correlation_analysis
 from antyx.utils.visualizations import basic_visuals
+
 
 class EDAReport:
     """Class for generating an Exploratory Data Analysis (EDA) report.
@@ -23,6 +25,7 @@ class EDAReport:
         >>> report = EDAReport("data/dataset.csv")
         >>> report.generate_html("eda_report.html")
     """
+
     def __init__(self, file_path):
         """Initializes the report generator with the file path.
 
@@ -45,16 +48,17 @@ class EDAReport:
         else:
             raise ValueError("Failed to load the file.")
 
-    def generate_html(self, output_path='eda_report.html', open_browser=True):
-        """Generates an HTML report with exploratory data analysis.
+    def generate_html(self, output_path='eda_report.html', open_browser=True, theme="light"):
+        """
+        Generates an HTML report with exploratory data analysis.
 
         Args:
             output_path (str): Path to save the HTML report.
             open_browser (bool): If True, opens the report in the browser.
 
         Example:
-            >>> report = EDAReport("data/dataset.csv")
-            >>> report.generate_html("report.html")
+            report = EDAReport("data/dataset.csv")
+            report.generate_html("report.html")
         """
         if self.df is None:
             raise ValueError("No data loaded to generate the report.")
@@ -63,77 +67,176 @@ class EDAReport:
         <html>
         <head>
             <meta charset="UTF-8">
-            <title>Antyx / {os.path.basename(self.file_path)}</title>
+            
+            <title>Antyx</title>
+            
+            <button onclick="toggleTheme()" 
+                    style="position:fixed; top:20px; right:20px; padding:10px 20px;">
+                Toggle Theme
+            </button>
+            
+            <script>
+            function toggleTheme() {{
+                document.body.classList.toggle("dark");
+            
+                // Forzar repaint solo en la pestaña activa
+                const activeTab = document.querySelector(".tab-content.active");
+                if (activeTab) {{
+                    activeTab.classList.add("force-repaint");
+                    void activeTab.offsetHeight; // reflow
+                    activeTab.classList.remove("force-repaint");
+                }}
+            
+                // Actualizar Plotly (si lo tienes)
+                const isDark = document.body.classList.contains("dark");
+                const plots = document.getElementsByClassName("plotly-graph-div");
+                for (let p of plots) {{
+                    Plotly.relayout(p, {{
+                        paper_bgcolor: isDark ? "#1e1e1e" : "white",
+                        plot_bgcolor: isDark ? "#1e1e1e" : "white",
+                        font: {{color: isDark ? "#e0e0e0" : "#333"}},
+                        "xaxis.tickfont.color": isDark ? "#e0e0e0" : "#333",
+                        "yaxis.tickfont.color": isDark ? "#e0e0e0" : "#333",
+                        "xaxis.titlefont.color": isDark ? "#e0e0e0" : "#333",
+                        "yaxis.titlefont.color": isDark ? "#e0e0e0" : "#333"
+                    }});
+                }}
+            }}
+            </script>
+            
             <style>
+                .force-repaint {{
+                    transform: scale(1);
+                }}
+                
+                :root {{
+                    --font-family: Arial, sans-serif;
+                
+                    /* Light theme */
+                    --bg-color: #f8f8f8;
+                    --text-color: #333;
+                    --accent-color: #1E90FE;
+                    --card-bg: #ffffff;
+                
+                    --table-header-bg: #eaeaea;
+                    --table-border-color: #ccc;
+                    --table-hover-bg: #e6f7ff;
+                
+                    --tab-bg: #ffffff;
+                    --tab-text: #1E90FE;
+                    --tab-active-bg: #1E90FE;
+                    --tab-active-text: #ffffff;
+                }}
+                
+                body.dark {{
+                    --font-family: Arial, sans-serif;
+                
+                    /* Dark theme */
+                    --bg-color: #1e1e1e;
+                    --text-color: #e0e0e0;
+                    --accent-color: #4aa3ff;
+                    --card-bg: #2a2a2a;
+                
+                    --table-header-bg: #3a3a3a;
+                    --table-border-color: #555;
+                    --table-hover-bg: #333;
+                
+                    --tab-bg: #2a2a2a;
+                    --tab-text: #4aa3ff;
+                    --tab-active-bg: #4aa3ff;
+                    --tab-active-text: #1e1e1e;
+                }}             
+
                 body {{
-                    font-family: Arial, Helvetica, sans-serif;
+                    font-family: var(--font-family);
                     margin: 0;
-                    background-color: #ffffff;
-                    color: #000000;
+                    background-color: var(--bg-color);
+                    color: var(--text-color);
+                    padding: 20px;
+                }}
+
+                .header {{
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 20px;
                 }}
 
                 h1 {{
                     font-size: 45px;
-                    background-image: url('images/h1v2.jpg');
                     background-size: cover;
                     background-position: center;
-                    color: #ffffff;
-                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-                    padding: 50px 20px;
+                    color: #1E90FE;
+                    padding: 20px;
+                    margin: 0 0 10px 0;
+                    text-align: left;
+                }}
+
+                .file-name {{
+                    font-size: 18px;
+                    color: #1E90FE;
                     margin: 0;
-                    text-align: center;
-                    text-shadow:
-                        3px 0px 2px rgba(0, 0, 0, 0.8),
-                        0px 3px 2px rgba(0, 0, 0, 0.8);
+                    text-align: left;
                 }}
 
                 .container {{
-                    padding: 30px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
                 }}
-                .file-info {{
-                    background-color: #f0f0f0;
-                    padding: 15px;
-                    border-left: 5px solid #00008b;
-                    margin-bottom: 20px;
-                    width: fit-content;
-                }}
+
                 .tabs {{
                     display: flex;
-                    border-bottom: 2px solid #00008b;
+                    border-bottom: 2px solid #1E90FE;
                     margin-bottom: 20px;
+                    width: 100%;
                 }}
+
                 .tab-link {{
-                    padding: 10px 20px;
+                    padding: 15px 30px;
                     cursor: pointer;
-                    background-color: #ffffff;
-                    border: 1px solid #00008b;
+                    background-color: var(--bg-color);
+                    color: var(--text-color);
+                    border: 1px solid var(--accent-color);
                     border-bottom: none;
-                    color: #00008b;
                     font-weight: bold;
                     margin-right: 5px;
                     border-top-left-radius: 6px;
                     border-top-right-radius: 6px;
-                    transition: background-color 0.3s;
+                    transition: background-color 0.3s, transform 0.2s;
                 }}
+
                 .tab-link:hover {{
-                    background-color: #e6e6ff;
+                    background-color: var(--table-hover-bg);
+                    transform: translateY(-2px);
                 }}
+
                 .tab-link.active {{
-                    background-color: #00008b;
-                    color: #ffffff;
+                    background-color: var(--tab-active-bg);
+                    color: var(--tab-active-text);
                 }}
+
                 .tab-content {{
-                    display: none;
                     animation: fadeIn 0.4s ease-in-out;
+                    width: 100%;
+                    padding: 20px;
+                    box-sizing: border-box;
+                    display: none;
                 }}
+
                 .tab-content.active {{
                     display: block;
                 }}
-                @keyframes fadeIn {{
-                    from {{ opacity: 0; }}
-                    to {{ opacity: 1; }}
-                }}
 
+                @keyframes fadeIn {{
+                    from {{opacity: 0; }}
+                    to {{opacity: 1; }}
+                }}
+                
+                .corr-container {{
+                    width: 100%;
+                    max-width: 100%;
+                }}
+                
                 /* Container for tables with horizontal scrolling */
                 .table-container {{
                     width: 100%;
@@ -151,10 +254,10 @@ class EDAReport:
                 }}
 
                 .table-custom th, .table-custom td {{
-                    border-left: none;
+                    border - left: none;
                     border-right: none;
-                    border-top: 1px solid #ccc;
-                    border-bottom: 1px solid #ccc;
+                    border-top: 1px solid var(--table-border-color);
+                    border-bottom: 1px solid var(--table-border-color);
                     padding: 8px;
                     text-align: right;
                     white-space: nowrap;
@@ -163,7 +266,8 @@ class EDAReport:
                 }}
 
                 .table-custom th {{
-                    background-color: #eaeaea;
+                    background-color: var(--table-header-bg);
+                    color: var(--text-color);
                     text-align: center;
                 }}
 
@@ -241,8 +345,11 @@ class EDAReport:
                 img {{
                     max-width: 100%;
                     height: auto;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
                 }}
             </style>
+
             <script>
                 function openTab(evt, tabId) {{
                     var i, tabcontent, tablinks;
@@ -260,7 +367,9 @@ class EDAReport:
             </script>
         </head>
         <body>
-            <h1>Exploratory Data Analysis with Antyx</h1>
+            <div class="header">
+                <h1>Antyx</h1>
+            </div>
             <div class="container">
                 <div class="file-info">
                     <p><strong>File:</strong> {os.path.basename(self.file_path)}</p>
@@ -268,12 +377,14 @@ class EDAReport:
                     <p><strong>Omitted lines:</strong> {self.skipped_lines}</p>
                 </div>
                 <div class="tabs">
-                    <div class="tab-link active" onclick="openTab(event, 'desc')">Summary</div>
+                    <div class="tab-link active" onclick="openTab(event, 'lines')">Lines</div>
+                    <div class="tab-link" onclick="openTab(event, 'desc')">Summary</div>
                     <div class="tab-link" onclick="openTab(event, 'outliers')">Outliers</div>
                     <div class="tab-link" onclick="openTab(event, 'corr')">Correlations</div>
                     <div class="tab-link" onclick="openTab(event, 'viz')">Visualizations</div>
                 </div>
-                <div id="desc" class="tab-content active">{describe_data(self.df)}</div>
+                <div id="lines" class="tab-content active">{lines(self.df)}</div>
+                <div id="desc" class="tab-content">{describe_data(self.df)}</div>
                 <div id="outliers" class="tab-content">{detect_outliers(self.df)}</div>
                 <div id="corr" class="tab-content">{correlation_analysis(self.df)}</div>
                 <div id="viz" class="tab-content">{basic_visuals(self.df)}</div>
