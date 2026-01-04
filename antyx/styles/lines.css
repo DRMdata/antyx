@@ -10,6 +10,13 @@
     color: var(--text-color);
 }
 
+#lines .lines-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 10px 0 6px 0;
+    color: var(--accent-color);
+}
+
 #lines .table-container {
     width: 100%;
     overflow-x: auto;

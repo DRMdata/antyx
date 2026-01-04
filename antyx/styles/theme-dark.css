@@ -27,3 +27,7 @@ body {
     color: #000000 !important;
 }
 
+.theme-icon {
+    filter: invert(100%);
+}
+

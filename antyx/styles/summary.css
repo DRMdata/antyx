@@ -10,6 +10,13 @@
     color: var(--text-color);
 }
 
+#desc .summary-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 10px 0 6px 0;
+    color: var(--accent-color);
+}
+
 #desc .table-custom {
     border-collapse: collapse;
     table-layout: fixed;

@@ -76,6 +76,9 @@ class EDAReport:
                 <meta charset="UTF-8">
                 <title>Antyx</title>
                 
+                <!-- Plotly -->
+                <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+                
                 <!-- CSS -->
                 <link rel="stylesheet" href="/antyx/styles/base.css">
                 <link rel="stylesheet" href="/antyx/styles/layout.css">
@@ -88,9 +91,6 @@ class EDAReport:
                 <link rel="stylesheet" href="/antyx/styles/visualizations.css">
 
                 <link id="theme" rel="stylesheet" href="/antyx/styles/theme-{self.theme}.css">
-
-                <!-- Plotly -->
-                <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
                 <!-- Theme toggle -->
                 <script>
@@ -132,7 +132,9 @@ class EDAReport:
                             <p></p>
                             <span class="subtitle">Exploratory Data Analysis</span>
                         </div>
-                        <button id="theme-toggle" onclick="toggleTheme()">🌓</button>
+                        <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()">
+                            <img src="/antyx/icons/toggle-icon.svg" class="theme-icon" alt="Toggle theme">
+                        </button>
                     </div>
                 </div>
                 <div class="container">
@@ -159,11 +161,7 @@ class EDAReport:
                     </div>
 
                     <div id="corr" class="tab-content">
-                        {correlation_analysis(self.df)}
-                    </div>
-
-                    <div id="outliers" class="tab-content">
-                        {detect_outliers(self.df)}
+                        {correlation_analysis(self.df, theme=self.theme)}
                     </div>
 
                     <div id="viz" class="tab-content">
