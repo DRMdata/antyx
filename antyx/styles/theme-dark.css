@@ -1,0 +1,29 @@
+body {
+    --bg-color: #1e1e1e;
+    --text-color: #e0e0e0;
+    --muted-text-color: #bbbbbb;
+    --card-bg: #1e1e1e;
+    --border-color: #333333;
+
+    --accent-color: #4aa3ff;
+    --accent-color-hover: #306bcb;
+
+    --secondary-button-bg: #2a2a2a;
+    --secondary-button-bg-hover: #3a3a3a;
+    --secondary-button-text: #f0f0f0;
+
+    --table-header-text: #000000
+}
+
+.header {
+    background-color: var(--card-bg);
+}
+
+.file-info {
+    background-color: var(--card-bg);
+}
+
+.table-custom th {
+    color: #000000 !important;
+}
+

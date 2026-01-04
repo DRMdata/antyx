@@ -1,0 +1,51 @@
+/* ============================
+   TABS — ESTILO ORIGINAL EXACTO
+   ============================ */
+
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #1E90FE;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.tab-link {
+    padding: 15px 30px;
+    cursor: pointer;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--accent-color);
+    border-bottom: none;
+    font-weight: bold;
+    margin-right: 5px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.tab-link:hover {
+    background-color: var(--table-hover-bg);
+    transform: translateY(-2px);
+}
+
+.tab-link.active {
+    background-color: var(--tab-active-bg);
+    color: var(--tab-active-text);
+}
+
+.tab-content {
+    animation: fadeIn 0.4s ease-in-out;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

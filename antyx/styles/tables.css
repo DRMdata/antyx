@@ -1,0 +1,64 @@
+/* tables.css */
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+.table-custom {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: auto;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.table-custom th,
+.table-custom td {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--table-border-color);
+    border-bottom: 1px solid var(--table-border-color);
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+}
+
+.table-custom th {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+    text-align: center;
+}
+
+.table-custom td:first-child {
+    text-align: left;
+}
+
+.table-custom td.empty {
+    background-color: #f9f9f9;
+    color: #ccc;
+}
+
+.table-custom th:nth-child(1),
+.table-custom td:nth-child(1) {
+    width: 200px !important;
+}
+
+.table-custom th:nth-child(2),
+.table-custom td:nth-child(2) {
+    width: 75px !important;
+}
+
+.table-custom td {
+    font-family: 'Courier New', monospace;
+}
+
+/* Grupos */
+.table-custom td.group1 { background-color: #e6f2ff; }
+.table-custom td.group2 { background-color: #d0e7ff; }
+.table-custom td.group3 { background-color: #c2dbf7; }
+.table-custom td.group4 { background-color: #b3d1f0; }
+

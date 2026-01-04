@@ -1,7 +1,6 @@
 import pandas as pd
 import re
 
-
 def format_number(x):
     return f"{x:,.2f}" if pd.notnull(x) else ""
 
@@ -11,6 +10,19 @@ def clean_table(html):
     html = html.replace("</table>", "")
     return html
 
+def render_table_block(title, html_rows):
+    """Render a table block with consistent HTML structure."""
+    return f"""
+    <div class="lines-block">
+        <h2 class="lines-title">{title}</h2>
+        <div class="table-container">
+            <table class="table-custom">
+                {html_rows}
+            </table>
+        </div>
+    </div>
+    """
+
 def lines(df, theme="light"):
     df_copy = df.copy()
 
@@ -18,31 +30,16 @@ def lines(df, theme="light"):
     for col in df_copy.select_dtypes(include=['float64', 'int64']).columns:
         df_copy[col] = df_copy[col].apply(format_number)
 
+    # First and last 10 rows
     ten_first = df_copy.head(10)
     ten_last = df_copy.tail(10)
 
-    first_html_raw = ten_first.to_html(index=False, border=0)
-    last_html_raw = ten_last.to_html(index=False, border=0)
+    # Convert to HTML (remove outer table)
+    first_html = clean_table(ten_first.to_html(index=False, border=0))
+    last_html = clean_table(ten_last.to_html(index=False, border=0))
 
-    first_html = clean_table(first_html_raw)
-    last_html = clean_table(last_html_raw)
+    # Build blocks
+    first_block = render_table_block("First lines data", first_html)
+    last_block = render_table_block("Last lines data", last_html)
 
-    first_lines_html = f"""
-    <h2>First lines data</h2>
-    <div class="table-container">
-        <table class="table-custom">
-            {first_html}
-        </table>
-    </div>
-    """
-
-    last_lines_html = f"""
-    <h2>Last lines data</h2>
-    <div class="table-container">
-        <table class="table-custom">
-            {last_html}
-        </table>
-    </div>
-    """
-
-    return first_lines_html + last_lines_html
+    return first_block + last_block

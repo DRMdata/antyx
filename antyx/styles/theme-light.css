@@ -1,0 +1,14 @@
+body {
+    --bg-color: #ffffff;
+    --text-color: #333;
+    --muted-text-color: #555;
+    --card-bg: #ffffff;
+    --border-color: #dddddd;
+
+    --accent-color: #1E90FE;
+    --accent-color-hover: #274b9f;
+
+    --secondary-button-bg: #f0f0f0;
+    --secondary-button-bg-hover: #e0e0e0;
+    --secondary-button-text: #333;
+}

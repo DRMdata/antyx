@@ -1,0 +1,78 @@
+/* ============================
+   SUMMARY — ESTILO ORIGINAL EXACTO
+   ============================ */
+
+#desc h2 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+#desc .table-custom {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: auto;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#desc .table-custom th,
+#desc .table-custom td {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--table-border-color);
+    border-bottom: 1px solid var(--table-border-color);
+    padding: 8px;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#desc .table-custom th {
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+    text-align: center;
+}
+
+#desc .table-custom td:first-child {
+    text-align: left;
+}
+
+#desc .table-custom th:nth-child(1),
+#desc .table-custom td:nth-child(1) {
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
+    text-align: left !important;
+}
+
+#desc .table-custom th:nth-child(2),
+#desc .table-custom td:nth-child(2) {
+    width: 75px !important;
+    min-width: 75px !important;
+    max-width: 75px !important;
+    text-align: left !important;
+}
+
+#desc .table-custom td {
+    font-family: 'Courier New', monospace;
+}
+
+/* Grupos EXACTOS */
+#desc .table-custom td.group1 { background-color: #e6f2ff; }
+#desc .table-custom td.group2 { background-color: #d0e7ff; }
+#desc .table-custom td.group3 { background-color: #c2dbf7; }
+#desc .table-custom td.group4 { background-color: #b3d1f0; }
+
+#lines .table-container {
+    overflow-x: auto;
+}
+
+#desc .table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 20px 0;
+}

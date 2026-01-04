@@ -1,0 +1,57 @@
+/* ============================
+   LINES — ESTILO ORIGINAL EXACTO
+   ============================ */
+
+#lines h2 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+#lines .table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+#lines .table-custom {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: auto;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#lines .table-custom th,
+#lines .table-custom td {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--table-border-color);
+    border-bottom: 1px solid var(--table-border-color);
+    padding: 8px;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#lines .table-custom th {
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+    text-align: center;
+}
+
+#lines .table-custom td:first-child {
+    text-align: left;
+}
+
+#lines .table-custom td {
+    font-family: 'Courier New', monospace;
+}
+
+#desc .table-container,
+#lines .table-container {
+    overflow-x: auto;
+}

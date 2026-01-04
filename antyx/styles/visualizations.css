@@ -1,0 +1,101 @@
+/* CONTROLES DE VISUALIZACIÓN */
+
+.viz-controls {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.viz-controls label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* SELECTOR MÚLTIPLE */
+
+.viz-select {
+    width: 100%;
+    min-height: 120px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color, #ccc);
+    background-color: var(--card-bg, #ffffff);
+    color: var(--text-color, #222);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+/* BOTONES DE TIPO DE GRÁFICO */
+
+.viz-buttons {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.viz-buttons button {
+    margin-right: 8px;
+    margin-bottom: 8px;
+    padding: 7px 14px;
+    background-color: var(--accent-color, #3367d6);
+    color: #ffffff;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.viz-buttons button:hover {
+    background-color: var(--accent-color-hover, #274b9f);
+    transform: translateY(-1px);
+}
+
+/* BOTÓN EXPORTAR */
+
+.viz-export {
+    margin-top: 5px;
+}
+
+.viz-export button {
+    padding: 6px 12px;
+    background-color: var(--secondary-button-bg, #f0f0f0);
+    color: var(--secondary-button-text, #333);
+    border-radius: 6px;
+    border: 1px solid var(--border-color, #ccc);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.viz-export button:hover {
+    background-color: var(--secondary-button-bg-hover, #e0e0e0);
+}
+
+/* GRID DE GRÁFICOS */
+
+.viz-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+    gap: 18px;
+    margin-top: 18px;
+}
+
+/* TARJETA DE GRÁFICO */
+
+.viz-item {
+    background-color: var(--card-bg, #ffffff);
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+    .viz-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .viz-select {
+        min-height: 90px;
+    }
+}

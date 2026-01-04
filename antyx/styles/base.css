@@ -1,0 +1,92 @@
+/* ============================
+   VARIABLES ORIGINALES
+   ============================ */
+
+:root {
+    --font-family: Arial, sans-serif;
+
+    /* Light theme */
+    --bg-color: #ffffff;
+    --text-color: #333;
+    --accent-color: #1E90FE;
+    --card-bg: #ffffff;
+
+    --table-header-bg: #eaeaea;
+    --table-header-text: #333;
+    --table-border-color: #ccc;
+    --table-hover-bg: #e6f7ff;
+
+    --tab-bg: #ffffff;
+    --tab-text: #1E90FE;
+    --tab-active-bg: #1E90FE;
+    --tab-active-text: #ffffff;
+}
+
+/* Dark theme overrides */
+body.dark {
+    --font-family: Arial, sans-serif;
+
+    --bg-color: #1e1e1e;
+    --text-color: #e0e0e0;
+    --accent-color: #4aa3ff;
+    --card-bg: #2a2a2a;
+
+    --table-header-bg: #3a3a3a;
+    --table-header-text: #000000;
+    --table-border-color: #555;
+    --table-hover-bg: #333;
+
+    --tab-bg: #2a2a2a;
+    --tab-text: #4aa3ff;
+    --tab-active-bg: #4aa3ff;
+    --tab-active-text: #1e1e1e;
+}
+
+/* ============================
+   ESTILO GLOBAL EXACTO
+   ============================ */
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 20px;
+}
+
+.header {
+    width: 90%;
+    margin: 0 auto;
+    display: block;
+    align-items: center ;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 50px;
+    background-size: cover;
+    background-position: left;
+    color: #1E90FE;
+    margin: 0 0 10px 0;
+    text-align: left;
+}
+
+.file-name {
+    font-size: 18px;
+    color: #1E90FE;
+    margin: 0;
+    text-align: left;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,97 @@
+/* correlations.css */
+
+/* Wrapper general: heatmap + lista */
+.corr-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Contenedor del heatmap */
+.corr-container {
+    flex: 1;
+    min-width: 320px;
+    max-width: 100%;
+    overflow: hidden;
+    background-color: var(--card-bg);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.corr-container > div {
+    margin: 0 auto;
+}
+
+/* Contenedor de la lista de correlaciones */
+.corr-side {
+    flex: 1;
+    min-width: 260px;
+    max-width: 100%;
+    background-color: var(--card-bg);
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Lista de correlaciones */
+.corr-list {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-color);
+}
+
+.corr-list ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.corr-list li {
+    margin-bottom: 6px;
+}
+
+/* Títulos dentro del módulo */
+.corr-list strong {
+    color: var(--accent-color);
+}
+
+/* Tabla de correlaciones */
+.corr-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.corr-table th,
+.corr-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--table-border-color);
+    text-align: left;
+    color: var(--text-color);
+}
+
+.corr-table th {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+    font-weight: bold;
+}
+
+.corr-table tr:hover {
+    background-color: var(--table-hover-bg);
+}
+
+.corr-container {
+    margin-top: 10px;
+}
+
+.corr-description {
+    margin-bottom: 8px;
+    color: var(--muted-text-color);
+    font-size: 0.9rem;
+}

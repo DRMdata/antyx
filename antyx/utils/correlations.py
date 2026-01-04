@@ -5,6 +5,27 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
+# ============================
+#  PLOTLY THEMES (LIGHT/DARK)
+# ============================
+
+PLOTLY_LIGHT = dict(
+    paper_bgcolor="white",
+    plot_bgcolor="white",
+    font=dict(color="#333")
+)
+
+PLOTLY_DARK = dict(
+    paper_bgcolor="#1e1e1e",
+    plot_bgcolor="#1e1e1e",
+    font=dict(color="#e0e0e0")
+)
+
+
+# ============================
+#  MAIN FUNCTION
+# ============================
+
 def correlation_analysis(df, threshold=0.5, theme="light"):
     numeric = df.select_dtypes(include="number")
 
@@ -15,28 +36,37 @@ def correlation_analysis(df, threshold=0.5, theme="light"):
     cols = corr.columns.tolist()
     n = len(cols)
 
-    # Truncado visual
+    # ----------------------------
+    #  Truncate long labels
+    # ----------------------------
     max_len = 12
     def truncate(label):
         return label if len(label) <= max_len else label[:max_len - 1] + "…"
 
     short_labels = [truncate(c) for c in cols]
 
-    # Matriz z
+    # ----------------------------
+    #  Heatmap matrix
+    # ----------------------------
     z = corr.values
 
-    # customdata: matriz NxN con (col_x_completa, col_y_completa)
-    full_x = np.array([[x for x in cols] for _ in cols])   # filas: y, columnas: x
+    # customdata for hover
+    full_x = np.array([[x for x in cols] for _ in cols])
     full_y = np.array([[y for _ in cols] for y in cols])
-    customdata = np.dstack((full_x, full_y))               # shape (n, n, 2)
+    customdata = np.dstack((full_x, full_y))
 
+    # ----------------------------
+    #  Theme selection
+    # ----------------------------
     is_dark = theme == "dark"
-    bg_color = "#1e1e1e" if is_dark else "white"
-    text_color = "#e0e0e0" if is_dark else "#333"
+    theme_cfg = PLOTLY_DARK if is_dark else PLOTLY_LIGHT
 
+    # ----------------------------
+    #  Heatmap
+    # ----------------------------
     heatmap = go.Heatmap(
         z=z,
-        x=list(range(n)),          # usamos índices numéricos
+        x=list(range(n)),
         y=list(range(n)),
         colorscale="RdBu",
         zmin=-1,
@@ -52,25 +82,29 @@ def correlation_analysis(df, threshold=0.5, theme="light"):
 
     fig = go.Figure(data=heatmap)
 
+    # ----------------------------
+    #  Layout (NO plotly_dark)
+    # ----------------------------
     fig.update_layout(
-        template="plotly_dark" if is_dark else "plotly_white",
         autosize=False,
         height=500,
         margin=dict(l=80, r=20, t=40, b=120),
-        paper_bgcolor=bg_color,
-        plot_bgcolor=bg_color,
-        font=dict(color=text_color)
+        paper_bgcolor=theme_cfg["paper_bgcolor"],
+        plot_bgcolor=theme_cfg["plot_bgcolor"],
+        font=theme_cfg["font"]
     )
 
-    # Ejes con etiquetas truncadas, pero usando índices como posición
+    # ----------------------------
+    #  Axes
+    # ----------------------------
     fig.update_xaxes(
         automargin=True,
         tickangle=90,
         tickmode="array",
         tickvals=list(range(n)),
         ticktext=short_labels,
-        tickfont=dict(color=text_color),
-        title_font=dict(color=text_color)
+        tickfont=theme_cfg["font"],
+        title_font=theme_cfg["font"]
     )
 
     fig.update_yaxes(
@@ -78,17 +112,23 @@ def correlation_analysis(df, threshold=0.5, theme="light"):
         tickmode="array",
         tickvals=list(range(n)),
         ticktext=short_labels,
-        tickfont=dict(color=text_color),
-        title_font=dict(color=text_color)
+        tickfont=theme_cfg["font"],
+        title_font=theme_cfg["font"]
     )
 
+    # ----------------------------
+    #  Convert Plotly figure to HTML
+    # ----------------------------
     corr_html = fig.to_html(
         full_html=False,
         include_plotlyjs="cdn",
         config={"responsive": False}
     )
 
-    # Significant correlations
+    # ============================
+    #  SIGNIFICANT CORRELATIONS
+    # ============================
+
     significant_correlations = corr[(corr > threshold) | (corr < -threshold)]
     significant_correlations = significant_correlations.dropna(how="all")
 
@@ -98,23 +138,48 @@ def correlation_analysis(df, threshold=0.5, theme="light"):
             if i != j and not pd.isna(value) and corr.index.get_loc(i) < corr.columns.get_loc(j):
                 significant_values.append((i, j, value))
 
-    list_html = "<div style='padding-left:24px;'>"
-    list_html += "<strong>significant correlations (Threshold ±{:.2f}):</strong><br>".format(threshold)
-    if not significant_values:
-        list_html += "<em>No significant correlations have been detected.</em>"
-    else:
-        list_html += "<ul style='margin-top:10px;'>"
+    # ----------------------------
+    #  TABLE HTML
+    # ----------------------------
+    if significant_values:
+        table_html = """
+        <table class="corr-table">
+            <thead>
+                <tr>
+                    <th>Variable X</th>
+                    <th>Variable Y</th>
+                    <th>Correlation</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
         for v1, v2, valor in significant_values:
-            list_html += f"<li>{v1} vs {v2}: <strong>{valor:.2f}</strong></li>"
-        list_html += "</ul>"
-    list_html += "</div>"
+            table_html += f"""
+                <tr>
+                    <td>{v1}</td>
+                    <td>{v2}</td>
+                    <td>{valor:.2f}</td>
+                </tr>
+            """
+        table_html += """
+            </tbody>
+        </table>
+        """
+    else:
+        table_html = "<em>No significant correlations have been detected.</em>"
 
+    # ----------------------------
+    #  FINAL HTML BLOCK
+    # ----------------------------
     html = f"""
-    <div style="display: flex; flex-wrap: wrap; align-items: flex-start;">
-        <div style="flex: 1; min-width: 300px; max-width: 100%; overflow: hidden;">
-            <div class="corr-container">{corr_html}</div>
+    <div class="corr-wrapper">
+        <div class="corr-container">{corr_html}</div>
+        <div class="corr-side">
+            <div class="corr-list">
+                <strong>Significant correlations (Threshold ±{threshold:.2f}):</strong><br>
+                {table_html}
+            </div>
         </div>
-        <div style="flex: 1; min-width: 250px;">{list_html}</div>
     </div>
     """
 
