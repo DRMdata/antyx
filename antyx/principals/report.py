@@ -6,12 +6,10 @@ from flask import Flask, request
 from antyx.utils.visualizations import (
     visualizations,
     generate_viz_html,
-    generate_viz_figure,
     export_figure,
 )
 from antyx.utils.lines import lines
 from antyx.utils.summary import describe_data
-from antyx.utils.outliers import detect_outliers
 from antyx.utils.correlations import correlation_analysis
 from .data_loader import DataLoader
 
@@ -146,7 +144,7 @@ class EDAReport:
                     </div>
 
                     <div class="tabs">
-                        <div class="tab-link active" onclick="openTab(event, 'lines')">Lines</div>
+                        <div class="tab-link active" onclick="openTab(event, 'lines')">Sample</div>
                         <div class="tab-link" onclick="openTab(event, 'desc')">Summary</div>
                         <div class="tab-link" onclick="openTab(event, 'corr')">Correlations</div>
                         <div class="tab-link" onclick="openTab(event, 'viz')">Visualizations</div>
@@ -185,26 +183,6 @@ class EDAReport:
                 viz_type,
                 self.theme,
             )
-
-        @self.app.route("/viz-export", methods=["POST"])
-        def viz_export():
-            data = request.json or {}
-            vars_ = data.get("vars", [])
-            viz_type = data.get("type", None)
-
-            fig = generate_viz_figure(
-                self.df,
-                vars_,
-                viz_type,
-                self.theme,
-            )
-
-            if fig is None:
-                return "No figure to export."
-
-            export_dir = os.getcwd()
-            path = export_figure(fig, output_dir=export_dir)
-            return path
 
     # ---------------------------------------------------------
     # Run server

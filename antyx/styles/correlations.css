@@ -23,6 +23,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .corr-container > div {
@@ -38,11 +40,13 @@
     padding: 15px 20px;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    margin-top: 0;
+    padding-top: 0;
 }
 
 /* Lista de correlaciones */
 .corr-list {
-    font-size: 15px;
+    font-size: 12px;
     line-height: 1.5;
     color: var(--text-color);
 }
@@ -82,14 +86,11 @@
     background-color: var(--table-header-bg);
     color: var(--table-header-text);
     font-weight: bold;
+    font-size: 15px;
 }
 
 .corr-table tr:hover {
     background-color: var(--table-hover-bg);
-}
-
-.corr-container {
-    margin-top: 10px;
 }
 
 .corr-description {

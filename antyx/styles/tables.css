@@ -30,7 +30,8 @@
 .table-custom th {
     background-color: var(--table-header-bg);
     color: var(--table-header-text);
-    text-align: center;
+    text-align: right;
+    font-size: 15px;
 }
 
 .table-custom td:first-child {
@@ -54,6 +55,7 @@
 
 .table-custom td {
     font-family: 'Courier New', monospace;
+    font-size: 14px;
 }
 
 /* Grupos */

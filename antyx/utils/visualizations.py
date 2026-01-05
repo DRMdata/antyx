@@ -1,11 +1,8 @@
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import os
 
-# ============================================================
 # THEMES
-# ============================================================
 
 PLOTLY_LIGHT = dict(
     paper_bgcolor="white",
@@ -19,9 +16,7 @@ PLOTLY_DARK = dict(
     font=dict(color="#e0e0e0")
 )
 
-# ============================================================
 # GRAPH FUNCTIONS
-# ============================================================
 
 def plot_hist(df, col, theme_cfg):
     fig = px.histogram(df, x=col)
@@ -68,18 +63,16 @@ def plot_heatmap(df, cols, theme_cfg):
     fig.update_layout(**theme_cfg)
     return fig
 
-# ============================================================
+
 # EXPORT
-# ============================================================
 
 def export_figure(fig, output_dir=".", name="visualization"):
     path = os.path.join(output_dir, f"{name}.png")
     fig.write_image(path)
     return path
 
-# ============================================================
+
 # HTML GENERATION FOR VISUALIZATIONS TAB
-# ============================================================
 
 def visualizations(df, theme="light"):
     """
@@ -109,13 +102,6 @@ def visualizations(df, theme="light"):
             <button onclick="setVizType('scatter')">Scatter</button>
             <button onclick="setVizType('bars')">Bars</button>
             <button onclick="setVizType('heatmap')">Heatmap</button>
-        </div>
-
-        <div class="viz-export">
-            <button onclick="exportViz()">
-                <img src="/antyx/icons/export.svg" alt="Export" style="width:14px; vertical-align:middle; margin-right:6px;">
-                Export
-            </button>
         </div>
 
     </div>
@@ -148,26 +134,17 @@ def visualizations(df, theme="light"):
         .then(r => r.text())
         .then(html => {{
             document.getElementById("viz-output").innerHTML = html;
-        }});
-    }}
+            // Execute Plotly intern scripts
+            document.querySelectorAll("#viz-output script").forEach(oldScript => {{
+                const newScript = document.createElement("script");
+                if (oldScript.src) {{
+                    newScript.src = oldScript.src;
+                }} else {{
+                    newScript.textContent = oldScript.textContent;
+                }}
+                oldScript.replaceWith(newScript);
+            }});
 
-    function exportViz() {{
-        const vars = Array.from(document.getElementById("viz-var-select").selectedOptions)
-                          .map(o => o.value);
-
-        fetch("/viz-export", {{
-            method: "POST",
-            headers: {{
-                "Content-Type": "application/json"
-            }},
-            body: JSON.stringify({{
-                type: currentVizType,
-                vars: vars
-            }})
-        }})
-        .then(r => r.text())
-        .then(path => {{
-            alert("Exported to: " + path);
         }});
     }}
 
@@ -176,9 +153,8 @@ def visualizations(df, theme="light"):
 
     return html
 
-# ============================================================
+
 # DYNAMIC GRAPH GENERATION FOR /viz
-# ============================================================
 
 def generate_viz_html(df, vars, type, theme):
     is_dark = theme == "dark"
@@ -189,9 +165,7 @@ def generate_viz_html(df, vars, type, theme):
     if not vars:
         return "<p>Please select one or more variables.</p>"
 
-    # ------------------------------
     # UNIVARIATE GRAPHS
-    # ------------------------------
     if type in ["hist", "kde", "box", "violin", "bars"]:
         for col in vars:
             if col not in df.columns:
@@ -222,9 +196,7 @@ def generate_viz_html(df, vars, type, theme):
 
         return "".join(html_blocks)
 
-    # ------------------------------
     # SCATTER (2–3 variables)
-    # ------------------------------
     if type == "scatter":
         if len(vars) < 2:
             return "<p>Please select at least 2 numeric variables for scatter.</p>"
@@ -235,9 +207,7 @@ def generate_viz_html(df, vars, type, theme):
 
         return f"<div class='viz-item'>{fig.to_html(full_html=False, include_plotlyjs=False)}</div>"
 
-    # ------------------------------
     # HEATMAP (2 categorical)
-    # ------------------------------
     if type == "heatmap":
         if len(vars) != 2:
             return "<p>Heatmap requires exactly 2 categorical variables.</p>"
@@ -249,44 +219,3 @@ def generate_viz_html(df, vars, type, theme):
         return f"<div class='viz-item'>{fig.to_html(full_html=False, include_plotlyjs=False)}</div>"
 
     return "<p>Unknown visualization type.</p>"
-
-# ============================================================
-# FIGURE GENERATION FOR EXPORT
-# ============================================================
-
-def generate_viz_figure(df, vars, type, theme):
-    is_dark = theme == "dark"
-    theme_cfg = PLOTLY_DARK if is_dark else PLOTLY_LIGHT
-
-    if not vars:
-        return None
-
-    # Univariate → export first variable
-    if type in ["hist", "kde", "box", "violin", "bars"]:
-        col = vars[0]
-        series = df[col]
-
-        if pd.api.types.is_numeric_dtype(series):
-            if type == "hist":
-                return plot_hist(df, col, theme_cfg)
-            elif type == "kde":
-                return plot_kde(df, col, theme_cfg)
-            elif type == "box":
-                return plot_box(df, col, theme_cfg)
-            elif type == "violin":
-                return plot_violin(df, col, theme_cfg)
-        else:
-            if type == "bars":
-                return plot_bars(df, col, theme_cfg)
-
-        return None
-
-    # Scatter
-    if type == "scatter":
-        return plot_scatter(df, vars, theme_cfg)
-
-    # Heatmap
-    if type == "heatmap":
-        return plot_heatmap(df, vars, theme_cfg)
-
-    return None
