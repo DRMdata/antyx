@@ -31,12 +31,12 @@ def lines(df, theme="light"):
         df_copy[col] = df_copy[col].apply(format_number)
 
     # First and last 10 rows
-    ten_first = df_copy.head(10)
-    ten_last = df_copy.tail(10)
+    first_lines = df_copy.head(5)
+    last_lines = df_copy.tail(5)
 
     # Convert to HTML (remove outer table)
-    first_html = clean_table(ten_first.to_html(index=False, border=0))
-    last_html = clean_table(ten_last.to_html(index=False, border=0))
+    first_html = clean_table(first_lines.to_html(index=False, border=0))
+    last_html = clean_table(last_lines.to_html(index=False, border=0))
 
     # Build blocks
     first_block = render_table_block("First lines data", first_html)

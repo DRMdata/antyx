@@ -1,8 +1,11 @@
-import pandas as pd
 import os
+import pandas as pd
+from antyx.utils.types import detect_var_type
+
 
 def format_number(x):
     return f"{x:,.2f}" if pd.notnull(x) else ""
+
 
 def render_summary_block(title, headers, rows_html):
     return f"""
@@ -21,105 +24,190 @@ def render_summary_block(title, headers, rows_html):
     </div>
     """
 
+
 # ============================================================
-#  BUILD SUMMARY DATAFRAMES (REAL SUMMARY)
+#  BUILD SUMMARY DATAFRAMES (TIPOS REALES)
 # ============================================================
 
-def build_summary_dataframes(df):
-    numeric_summary = []
-    non_numeric_summary = []
+def build_summary_dataframes(df: pd.DataFrame):
+    numeric_rows = []
+    binary_rows = []
+    categorical_rows = []
+    datetime_rows = []
 
     for col in df.columns:
-        dtype = df[col].dtype
-        total = len(df)
-        non_null = df[col].count()
-        nulls = df[col].isnull().sum()
-        unique = df[col].nunique()
-        top = df[col].mode().iloc[0] if not df[col].mode().empty else ''
-        freq = df[col].value_counts().iloc[0] if not df[col].value_counts().empty else ''
-        top_pct = (freq / total) * 100 if total > 0 else 0
+        s = df[col]
+        vtype = detect_var_type(s)
 
-        is_numeric = pd.api.types.is_numeric_dtype(df[col])
+        total = len(s)
+        non_null = s.count()
+        nulls = s.isnull().sum()
+        unique = s.nunique()
 
-        if is_numeric:
-            desc = df[col].describe()
-            var = df[col].var()
+        base_info = {
+            "Variable": col,
+            "Type": vtype,
+            "Non-null": non_null,
+            "Nulls": nulls,
+            "Unique": unique,
+        }
 
-            numeric_summary.append({
-                "Variable": col,
-                "Type": str(dtype),
-                "Non-null": non_null,
-                "Nulls": nulls,
-                "Unique": unique,
+        if vtype == "numeric":
+            desc = s.describe()
+            var = s.var()
+            top = s.mode().iloc[0] if not s.mode().empty else ""
+            freq = s.value_counts().iloc[0] if not s.value_counts().empty else ""
+            top_pct = (freq / total * 100) if total > 0 else 0
+
+            row = {
+                **base_info,
                 "Top": top,
                 "Freq Top": freq,
                 "% Top": round(top_pct, 2),
-                "Mean": desc["mean"],
-                "Std": desc["std"],
+                "Mean": desc.get("mean"),
+                "Std": desc.get("std"),
                 "Var": var,
-                "Min": desc["min"],
-                "25%": desc["25%"],
-                "50%": desc["50%"],
-                "75%": desc["75%"],
-                "Max": desc["max"]
-            })
+                "Min": desc.get("min"),
+                "25%": desc.get("25%"),
+                "50%": desc.get("50%"),
+                "75%": desc.get("75%"),
+                "Max": desc.get("max"),
+            }
+            numeric_rows.append(row)
 
-        else:
-            non_numeric_summary.append({
-                "Variable": col,
-                "Type": str(dtype),
-                "Non-null": non_null,
-                "Nulls": nulls,
-                "Unique": unique,
+        elif vtype == "binary":
+            counts = s.value_counts(dropna=True)
+            top = counts.index[0] if not counts.empty else ""
+            freq = counts.iloc[0] if not counts.empty else 0
+            top_pct = (freq / total * 100) if total > 0 else 0
+
+            row = {
+                **base_info,
                 "Top": top,
                 "Freq Top": freq,
-                "% Top": round(top_pct, 2)
-            })
+                "% Top": round(top_pct, 2),
+            }
+            binary_rows.append(row)
 
-    return (
-        pd.DataFrame(numeric_summary),
-        pd.DataFrame(non_numeric_summary)
-    )
+        elif vtype == "categorical":
+            counts = s.value_counts(dropna=True)
+            top = counts.index[0] if not counts.empty else ""
+            freq = counts.iloc[0] if not counts.empty else 0
+            top_pct = (freq / total * 100) if total > 0 else 0
+
+            row = {
+                **base_info,
+                "Top": top,
+                "Freq Top": freq,
+                "% Top": round(top_pct, 2),
+            }
+            categorical_rows.append(row)
+
+        elif vtype == "datetime":
+            sd = s.dropna()
+            min_val = sd.min() if not sd.empty else None
+            max_val = sd.max() if not sd.empty else None
+
+            row = {
+                **base_info,
+                "Min": min_val,
+                "Max": max_val,
+            }
+            datetime_rows.append(row)
+
+        # Si es "other", lo omitimos del summary principal
+        # o podríamos añadir un bloque aparte si lo ves útil.
+
+    numeric_df = pd.DataFrame(numeric_rows)
+    binary_df = pd.DataFrame(binary_rows)
+    categorical_df = pd.DataFrame(categorical_rows)
+    datetime_df = pd.DataFrame(datetime_rows)
+
+    return numeric_df, binary_df, categorical_df, datetime_df
+
 
 # ============================================================
-#  EXPORT FUNCTIONS (EXPORT REAL SUMMARY)
+#  EXPORT FUNCTIONS
 # ============================================================
 
-def export_summary(numeric_df, non_numeric_df, output_dir="."):
+def export_summary(numeric_df, binary_df, categorical_df, datetime_df, output_dir="."):
     numeric_csv = os.path.join(output_dir, "summary_numeric.csv")
-    non_numeric_csv = os.path.join(output_dir, "summary_non_numeric.csv")
+    binary_csv = os.path.join(output_dir, "summary_binary.csv")
+    categorical_csv = os.path.join(output_dir, "summary_categorical.csv")
+    datetime_csv = os.path.join(output_dir, "summary_datetime.csv")
     excel_path = os.path.join(output_dir, "summary.xlsx")
 
-    numeric_df.to_csv(numeric_csv, index=False)
-    non_numeric_df.to_csv(non_numeric_csv, index=False)
+    if not numeric_df.empty:
+        numeric_df.to_csv(numeric_csv, index=False)
+    if not binary_df.empty:
+        binary_df.to_csv(binary_csv, index=False)
+    if not categorical_df.empty:
+        categorical_df.to_csv(categorical_csv, index=False)
+    if not datetime_df.empty:
+        datetime_df.to_csv(datetime_csv, index=False)
 
     with pd.ExcelWriter(excel_path) as writer:
-        numeric_df.to_excel(writer, sheet_name="Numeric", index=False)
-        non_numeric_df.to_excel(writer, sheet_name="NonNumeric", index=False)
+        if not numeric_df.empty:
+            numeric_df.to_excel(writer, sheet_name="Numeric", index=False)
+        if not binary_df.empty:
+            binary_df.to_excel(writer, sheet_name="Binary", index=False)
+        if not categorical_df.empty:
+            categorical_df.to_excel(writer, sheet_name="Categorical", index=False)
+        if not datetime_df.empty:
+            datetime_df.to_excel(writer, sheet_name="Datetime", index=False)
 
-    return numeric_csv, non_numeric_csv, excel_path
+    return {
+        "numeric_csv": numeric_csv if not numeric_df.empty else None,
+        "binary_csv": binary_csv if not binary_df.empty else None,
+        "categorical_csv": categorical_csv if not categorical_df.empty else None,
+        "datetime_csv": datetime_csv if not datetime_df.empty else None,
+        "excel": excel_path,
+    }
+
 
 # ============================================================
 #  MAIN SUMMARY FUNCTION
 # ============================================================
 
 def describe_data(df, output_dir="."):
-    numeric_df, non_numeric_df = build_summary_dataframes(df)
-    numeric_csv, non_numeric_csv, excel_file = export_summary(numeric_df, non_numeric_df, output_dir)
+    numeric_df, binary_df, categorical_df, datetime_df = build_summary_dataframes(df)
+    export_paths = export_summary(numeric_df, binary_df, categorical_df, datetime_df, output_dir)
 
-    numeric_rows = ""
-    for _, row in numeric_df.iterrows():
-        numeric_rows += "<tr>" + "".join([f"<td>{format_number(v) if isinstance(v, float) else v}</td>" for v in row]) + "</tr>"
+    blocks_html = ""
 
-    non_numeric_rows = ""
-    for _, row in non_numeric_df.iterrows():
-        non_numeric_rows += "<tr>" + "".join([f"<td>{v}</td>" for v in row]) + "</tr>"
+    if not numeric_df.empty:
+        numeric_rows = ""
+        for _, row in numeric_df.iterrows():
+            numeric_rows += "<tr>" + "".join(
+                f"<td>{format_number(v) if isinstance(v, float) else v}</td>"
+                for v in row
+            ) + "</tr>"
+        numeric_headers = list(numeric_df.columns)
+        blocks_html += render_summary_block("Numeric data", numeric_headers, numeric_rows)
 
-    numeric_headers = list(numeric_df.columns)
-    non_numeric_headers = list(non_numeric_df.columns)
+    if not binary_df.empty:
+        binary_rows = ""
+        for _, row in binary_df.iterrows():
+            binary_rows += "<tr>" + "".join(f"<td>{v}</td>" for v in row) + "</tr>"
+        binary_headers = list(binary_df.columns)
+        blocks_html += render_summary_block("Binary data", binary_headers, binary_rows)
 
-    numeric_block = render_summary_block("Numerical data", numeric_headers, numeric_rows)
-    non_numeric_block = render_summary_block("Non-numerical data", non_numeric_headers, non_numeric_rows)
+    if not categorical_df.empty:
+        cat_rows = ""
+        for _, row in categorical_df.iterrows():
+            cat_rows += "<tr>" + "".join(f"<td>{v}</td>" for v in row) + "</tr>"
+        cat_headers = list(categorical_df.columns)
+        blocks_html += render_summary_block("Categorical data", cat_headers, cat_rows)
+
+    if not datetime_df.empty:
+        dt_rows = ""
+        for _, row in datetime_df.iterrows():
+            dt_rows += "<tr>" + "".join(f"<td>{v}</td>" for v in row) + "</tr>"
+        dt_headers = list(datetime_df.columns)
+        blocks_html += render_summary_block("Datetime data", dt_headers, dt_rows)
+
+    # Export (icon) — mantenemos tu Excel principal
+    excel_file = export_paths["excel"]
 
     export_html = f"""
     <div class="summary-export">
@@ -129,4 +217,4 @@ def describe_data(df, output_dir="."):
     </div>
     """
 
-    return export_html + numeric_block + non_numeric_block
+    return export_html + blocks_html

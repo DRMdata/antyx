@@ -1,4 +1,6 @@
-/* ===== Layout general ===== */
+/* ============================
+   LAYOUT
+   ============================ */
 
 .vp-layout {
     display: grid;
@@ -8,7 +10,9 @@
     margin-top: 20px;
 }
 
-/* ===== Sidebar ===== */
+/* ============================
+   SIDEBAR
+   ============================ */
 
 .vp-sidebar {
     background-color: var(--card-bg);
@@ -33,7 +37,6 @@
     margin-bottom: 10px;
 }
 
-/* Botón de tipo */
 .vp-type-link {
     width: 100%;
     text-align: left;
@@ -48,18 +51,15 @@
     align-items: center;
 }
 
-/* Hover */
 .vp-type-link:hover {
     color: var(--accent-color);
 }
 
-/* Contador */
 .vp-count {
     font-size: 0.85rem;
     color: var(--muted-text-color);
 }
 
-/* Lista de variables (colapsada por defecto) */
 .vp-var-list {
     list-style: none;
     margin: 4px 0 8px 0;
@@ -71,7 +71,6 @@
     display: block;
 }
 
-/* Botón de variable */
 .vp-var-link {
     border: none;
     background: none;
@@ -86,16 +85,17 @@
     color: var(--accent-color);
 }
 
-/* ===== Panel principal ===== */
+/* ============================
+   PANEL PRINCIPAL
+   ============================ */
 
 .vp-main {
     display: block;
 }
 
-/* Secciones */
 .vp-section {
     margin-bottom: 32px;
-    scroll-margin-top: 90px; /* evita que el sticky tape el título */
+    scroll-margin-top: 90px;
 }
 
 .vp-section-title {
@@ -105,7 +105,9 @@
     padding-bottom: 4px;
 }
 
-/* ===== Tarjetas ===== */
+/* ============================
+   TARJETAS
+   ============================ */
 
 .vp-var-card {
     background-color: var(--card-bg);
@@ -118,16 +120,18 @@
 
 .vp-var-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 8px;
 }
 
 .vp-var-name {
     font-weight: 600;
     font-size: 1rem;
+    margin-bottom: 4px;
 }
 
+/* Tipo de dato debajo del nombre, siempre visible */
 .vp-var-type-tag {
     font-size: 0.8rem;
     padding: 2px 6px;
@@ -156,7 +160,9 @@
     font-size: 0.8rem;
 }
 
-/* ===== Gráficos ===== */
+/* ============================
+   GRÁFICOS
+   ============================ */
 
 .vp-fig-row {
     display: flex;
@@ -181,7 +187,36 @@
     color: var(--muted-text-color);
 }
 
-/* ===== Responsive ===== */
+/* ============================
+   BOTÓN FLOTANTE TOP
+   ============================ */
+
+.vp-back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 999;
+}
+
+.vp-back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
 
 @media (max-width: 960px) {
     .vp-layout {

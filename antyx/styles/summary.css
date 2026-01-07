@@ -41,11 +41,11 @@
 #desc .table-custom th {
     background-color: var(--table-header-bg);
     color: var(--text-color);
-    text-align: center;
+    text-align: right;
 }
 
 #desc .table-custom td:first-child {
-    text-align: left;
+    text-align: right;
 }
 
 #desc .table-custom th:nth-child(1),
