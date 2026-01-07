@@ -1,11 +1,10 @@
 Variable,Type,Non-null,Nulls,Unique,Top,Freq Top,% Top
-FECHA_REGISTRO,object,9512,0,9489,1/10/2019 9:50,2,0.02
-CANAL_REGISTRO,object,9512,0,3,Directorios,4859,51.08
-FECHA_CLIENTE,object,9512,0,9477,1/7/2020 11:43,2,0.02
-FORMAJURIDICA,object,9512,0,7,PERSONA FISICA,5600,58.87
-SECTOR,object,9512,0,23,9,5600,58.87
-DESC_SECTOR,object,9512,0,23,NOSECTOR,5600,58.87
-ESTADO,object,9512,0,5,VIVA,5600,58.87
-DEPARTAMENTO,object,3912,5600,31,BOGOTA,1951,20.51
-TAMA•O,object,3912,5600,5,MICRO,1745,18.35
-ANTIGUEDAD,object,3912,5600,7,M†s de 10 A§os,2491,26.19
+Hospital_type_code,object,318438,0,7,a,143425,45.04
+Hospital_region_code,object,318438,0,3,X,133336,41.87
+Department,object,318438,0,5,gynecology,249486,78.35
+Ward_Type,object,318438,0,6,R,127947,40.18
+Ward_Facility_Code,object,318438,0,6,F,112753,35.41
+Type of Admission,object,318438,0,3,Trauma,152261,47.81
+Severity of Illness,object,318438,0,3,Moderate,175843,55.22
+Age,object,318438,0,10,41-50,63749,20.02
+Stay,object,318438,0,11,21-30,87491,27.48

@@ -6,11 +6,11 @@ from flask import Flask, request
 from antyx.utils.visualizations import (
     visualizations,
     generate_viz_html,
-    export_figure,
 )
 from antyx.utils.lines import lines
 from antyx.utils.summary import describe_data
 from antyx.utils.correlations import correlation_analysis
+from antyx.utils.profiles import variable_profiles
 from .data_loader import DataLoader
 
 
@@ -86,6 +86,7 @@ class EDAReport:
                 <link rel="stylesheet" href="/antyx/styles/correlations.css">
                 <link rel="stylesheet" href="/antyx/styles/lines.css">
                 <link rel="stylesheet" href="/antyx/styles/summary.css">
+                <link rel="stylesheet" href="/antyx/styles/profiles.css">
                 <link rel="stylesheet" href="/antyx/styles/visualizations.css">
 
                 <link id="theme" rel="stylesheet" href="/antyx/styles/theme-{self.theme}.css">
@@ -148,6 +149,7 @@ class EDAReport:
                         <div class="tab-link" onclick="openTab(event, 'desc')">Summary</div>
                         <div class="tab-link" onclick="openTab(event, 'corr')">Correlations</div>
                         <div class="tab-link" onclick="openTab(event, 'viz')">Visualizations</div>
+                        <div class="tab-link" onclick="openTab(event, 'prof')">Profiles</div>
                     </div>
 
                     <div id="lines" class="tab-content active">
@@ -164,6 +166,9 @@ class EDAReport:
 
                     <div id="viz" class="tab-content">
                         {visualizations(self.df, theme=self.theme)}
+                    </div>
+                    <div id="prof" class="tab-content">
+                        {variable_profiles(self.df, theme=self.theme)}
                     </div>
                 </div>
             </body>

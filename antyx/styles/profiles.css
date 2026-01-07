@@ -1,0 +1,196 @@
+/* ===== Layout general ===== */
+
+.vp-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 20px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* ===== Sidebar ===== */
+
+.vp-sidebar {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    position: sticky;
+    top: 80px;
+}
+
+.vp-sidebar-title {
+    margin: 0 0 8px 0;
+    font-size: 0.95rem;
+    color: var(--muted-text-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.vp-side-section {
+    margin-bottom: 10px;
+}
+
+/* Botón de tipo */
+.vp-type-link {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    padding: 6px 0;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Hover */
+.vp-type-link:hover {
+    color: var(--accent-color);
+}
+
+/* Contador */
+.vp-count {
+    font-size: 0.85rem;
+    color: var(--muted-text-color);
+}
+
+/* Lista de variables (colapsada por defecto) */
+.vp-var-list {
+    list-style: none;
+    margin: 4px 0 8px 0;
+    padding-left: 12px;
+    display: none;
+}
+
+.vp-side-section.active .vp-var-list {
+    display: block;
+}
+
+/* Botón de variable */
+.vp-var-link {
+    border: none;
+    background: none;
+    padding: 2px 0;
+    font-size: 0.9rem;
+    color: var(--muted-text-color);
+    cursor: pointer;
+    text-align: left;
+}
+
+.vp-var-link:hover {
+    color: var(--accent-color);
+}
+
+/* ===== Panel principal ===== */
+
+.vp-main {
+    display: block;
+}
+
+/* Secciones */
+.vp-section {
+    margin-bottom: 32px;
+    scroll-margin-top: 90px; /* evita que el sticky tape el título */
+}
+
+.vp-section-title {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+}
+
+/* ===== Tarjetas ===== */
+
+.vp-var-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    scroll-margin-top: 90px;
+}
+
+.vp-var-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.vp-var-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.vp-var-type-tag {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background-color: var(--badge-bg, rgba(0,0,0,0.06));
+    color: var(--muted-text-color);
+    text-transform: uppercase;
+}
+
+/* Resumen */
+.vp-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+
+.vp-summary div {
+    min-width: 120px;
+}
+
+.vp-top-values {
+    margin: 4px 0 0 0;
+    padding-left: 16px;
+    font-size: 0.8rem;
+}
+
+/* ===== Gráficos ===== */
+
+.vp-fig-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+}
+
+.vp-fig {
+    flex: 0 0 auto;
+    min-width: 260px;
+}
+
+.vp-fig-title {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+    color: var(--muted-text-color);
+}
+
+.vp-no-fig {
+    font-size: 0.85rem;
+    color: var(--muted-text-color);
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 960px) {
+    .vp-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .vp-sidebar {
+        position: static;
+        max-height: none;
+        margin-bottom: 12px;
+    }
+}

@@ -219,3 +219,4 @@ def generate_viz_html(df, vars, type, theme):
         return f"<div class='viz-item'>{fig.to_html(full_html=False, include_plotlyjs=False)}</div>"
 
     return "<p>Unknown visualization type.</p>"
+
