@@ -51,37 +51,29 @@ body {
     margin: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
-    padding: 20px;
+    padding: 0;
 }
 
 .header {
-    width: 90%;
-    margin: 0 auto;
-    display: block;
-    align-items: center ;
-    margin-bottom: 30px;
+    width: 100%;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--table-border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 12px 20px;
 }
 
 h1 {
     font-size: 50px;
-    background-size: cover;
-    background-position: left;
     color: #1E90FE;
     margin: 0 0 10px 0;
     text-align: left;
 }
 
-.file-name {
-    font-size: 18px;
-    color: #1E90FE;
-    margin: 0;
-    text-align: left;
-}
-
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    width: 90%;
+    margin: 20px auto;
 }
 
 img {
@@ -89,4 +81,16 @@ img {
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+html {
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body {
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+svg {
+    transition: color 0.25s ease;
 }

@@ -1,4 +1,6 @@
 import pandas as pd
+import plotly.express as px
+
 from antyx.utils.visualizations import (
     plot_hist,
     plot_box,
@@ -28,19 +30,126 @@ def profile_binary_figs(df, col, theme_cfg):
     return [("Bar chart", plot_bars(df, col, theme_cfg))]
 
 
+# ============================================================
+# Helper: convertir Serie a DataFrame con DatetimeIndex
+# ============================================================
+
+def _to_dt_index(s):
+    # Convertir a datetime con dayfirst=True (evita warnings)
+    s = pd.to_datetime(s.dropna(), dayfirst=True, errors="coerce")
+    s = s.dropna()
+
+    df = s.to_frame(name="value")
+    df.index = df["value"]  # DatetimeIndex obligatorio
+    return df
+
+
+# ============================================================
+# 1. HISTOGRAMA TEMPORAL INTELIGENTE
+# ============================================================
+
+def fig_datetime_histogram(s, theme_cfg):
+    df = _to_dt_index(s)
+    if df.empty:
+        return None
+
+    range_days = (df.index.max() - df.index.min()).days
+
+    if range_days <= 31:
+        freq = "D"
+    elif range_days <= 180:
+        freq = "W"
+    elif range_days <= 730:
+        freq = "M"
+    else:
+        freq = "YE"   # reemplazo seguro de 'Y'
+
+    grouped = df.groupby(pd.Grouper(freq=freq)).size().reset_index(name="count")
+
+    fig = px.bar(grouped, x=grouped.columns[0], y="count")
+    fig.update_layout(**theme_cfg)
+    return ("Distribution over time", fig)
+
+
+# ============================================================
+# 2. HEATMAP DÍA × HORA (solo si hay horas)
+# ============================================================
+
+def fig_datetime_heatmap(s, theme_cfg):
+    df = _to_dt_index(s)
+    if df.empty:
+        return None
+
+    # Si no hay horas distintas, no tiene sentido
+    if df.index.hour.nunique() <= 1:
+        return None
+
+    df2 = pd.DataFrame({
+        "date": df.index.date,
+        "hour": df.index.hour
+    })
+
+    heat = df2.groupby(["date", "hour"]).size().reset_index(name="count")
+
+    fig = px.density_heatmap(
+        heat,
+        x="date",
+        y="hour",
+        z="count",
+        color_continuous_scale="Blues"
+    )
+    fig.update_layout(**theme_cfg)
+    return ("Activity heatmap (date × hour)", fig)
+
+
+# ============================================================
+# 3. CALENDARIO SEMANAL (tipo GitHub)
+# ============================================================
+
+def fig_datetime_calendar(s, theme_cfg):
+    df = _to_dt_index(s)
+    if df.empty:
+        return None
+
+    df2 = pd.DataFrame({"date": df.index.date})
+    df2 = df2.groupby("date").size().reset_index(name="count")
+
+    df2["dow"] = pd.to_datetime(df2["date"]).dt.weekday
+    df2["week"] = pd.to_datetime(df2["date"]).dt.isocalendar().week
+
+    fig = px.density_heatmap(
+        df2,
+        x="week",
+        y="dow",
+        z="count",
+        color_continuous_scale="Blues",
+        labels={"dow": "Day of week", "week": "Week"}
+    )
+    fig.update_layout(**theme_cfg)
+    return ("Calendar heatmap", fig)
+
+
+# ============================================================
+# FUNCIÓN PRINCIPAL PARA PROFILES
+# ============================================================
+
 def profile_datetime_figs(df, col, theme_cfg):
     series = df[col].dropna()
     if series.empty:
         return []
 
-    s = series.sort_values()
-    counts = s.value_counts().sort_index().reset_index()
-    counts.columns = [col, "count"]
+    figs = []
 
-    import plotly.express as px
-    fig = px.line(counts, x=col, y="count")
-    fig.update_layout(**theme_cfg)
-    return [("Time series", fig)]
+    f1 = fig_datetime_histogram(series, theme_cfg)
+    if f1: figs.append(f1)
+
+    f2 = fig_datetime_heatmap(series, theme_cfg)
+    if f2: figs.append(f2)
+
+    f3 = fig_datetime_calendar(series, theme_cfg)
+    if f3: figs.append(f3)
+
+    return figs
 
 
 # ============================
@@ -155,6 +264,10 @@ def variable_profiles(df, theme="light"):
     def render_var_card(col, vtype):
         stats = var_summary_stats(df, col, vtype)
 
+        # ============================
+        # RESUMEN SEGÚN TIPO
+        # ============================
+
         if vtype == "numeric":
             summary_html = f"""
             <div class="vp-summary">
@@ -179,7 +292,8 @@ def variable_profiles(df, theme="light"):
                 <ul class="vp-top-values">{top_vals}</ul>
             </div>
             """
-            figs = profile_binary_figs(df, col, theme_cfg) if vtype == "binary" else profile_categorical_figs(df, col, theme_cfg)
+            figs = profile_binary_figs(df, col, theme_cfg) if vtype == "binary" else profile_categorical_figs(df, col,
+                                                                                                              theme_cfg)
 
         elif vtype == "datetime":
             summary_html = f"""
@@ -202,19 +316,27 @@ def variable_profiles(df, theme="light"):
             """
             figs = []
 
+        # ============================
+        # FIGURAS
+        # ============================
+
         if figs:
-            fig_blocks = "".join(
-                f"""
-                <div class="vp-fig">
-                    <div class="vp-fig-title">{title}</div>
-                    {fig.to_html(full_html=False, include_plotlyjs=False)}
-                </div>
+            fig_blocks = ""
+            for title, fig in figs:
+                extra_class = "calendar" if "Calendar" in title else ""
+                fig_blocks += f"""
+                    <div class="vp-fig {extra_class}">
+                        <div class="vp-fig-title">{title}</div>
+                        {fig.to_html(full_html=False, include_plotlyjs=False)}
+                    </div>
                 """
-                for title, fig in figs
-            )
             figs_html = f"<div class='vp-fig-row'>{fig_blocks}</div>"
         else:
             figs_html = "<div class='vp-no-fig'>No suitable visualization available.</div>"
+
+        # ============================
+        # TARJETA COMPLETA
+        # ============================
 
         return f"""
         <div class="vp-var-card" id="var-{col}">
@@ -226,7 +348,6 @@ def variable_profiles(df, theme="light"):
             {figs_html}
         </div>
         """
-
     # Secciones
     def render_section(title, vtype_key):
         vars_ = var_types[vtype_key]

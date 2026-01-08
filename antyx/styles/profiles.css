@@ -176,6 +176,10 @@
     min-width: 260px;
 }
 
+.vp-fig.calendar {
+    min-width: 600px;
+}
+
 .vp-fig-title {
     font-size: 0.85rem;
     margin-bottom: 4px;

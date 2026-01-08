@@ -63,24 +63,19 @@ class EDAReport:
 
         @self.app.route("/")
         def index():
-            file_name = os.path.basename(self.file_path)
-            loaded_lines = len(self.df)
-            omitted_lines = self.skipped_lines
-
             html = f"""
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="UTF-8">
                 <title>Antyx</title>
-                
+
                 <!-- Plotly -->
                 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-                
+
                 <!-- CSS -->
                 <link rel="stylesheet" href="/antyx/styles/base.css">
                 <link rel="stylesheet" href="/antyx/styles/layout.css">
-                <link rel="stylesheet" href="/antyx/styles/tabs.css">
                 <link rel="stylesheet" href="/antyx/styles/tables.css">
                 <link rel="stylesheet" href="/antyx/styles/images.css">
                 <link rel="stylesheet" href="/antyx/styles/correlations.css">
@@ -93,33 +88,75 @@ class EDAReport:
 
                 <!-- Theme toggle -->
                 <script>
-                function toggleTheme() {{
-                    const link = document.getElementById("theme");
-                    const current = link.getAttribute("href");
-
-                    if (current.endsWith("theme-light.css")) {{
-                        link.setAttribute("href", "/antyx/styles/theme-dark.css");
-                    }} else {{
-                        link.setAttribute("href", "/antyx/styles/theme-light.css");
-                    }}
+                function setThemeIcon(isDark) {{
+                  const iconSpan = document.getElementById("theme-icon");
+                  if (!iconSpan) return;
+                
+                  if (isDark) {{
+                    // Mostrar sol (tema oscuro → cambiar a claro)
+                    iconSpan.innerHTML = `
+                      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="4" fill="currentColor"/>
+                        <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                          <line x1="12" y1="2" x2="12" y2="5"/>
+                          <line x1="12" y1="19" x2="12" y2="22"/>
+                          <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
+                          <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+                          <line x1="2" y1="12" x2="5" y2="12"/>
+                          <line x1="19" y1="12" x2="22" y2="12"/>
+                          <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
+                          <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+                        </g>
+                      </svg>`;
+                  }} else {{
+                    // Mostrar luna (tema claro → cambiar a oscuro)
+                    iconSpan.innerHTML = `<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <!-- Luna creciente -->
+                        <path d="M15 2a8 8 0 1 0 7 11A6 6 0 1 1 15 2Z"
+                        fill="currentColor"/>
+                    </svg>`;
+                  }}
                 }}
+                
+                function toggleTheme() {{
+                  const link = document.getElementById("theme");
+                  const current = link.getAttribute("href");
+                  const isLight = current.endsWith("theme-light.css");
+                
+                  link.setAttribute("href", isLight
+                    ? "/antyx/styles/theme-dark.css"
+                    : "/antyx/styles/theme-light.css");
+                
+                  setThemeIcon(isLight);
+                }}
+                
+                document.addEventListener("DOMContentLoaded", () => {{
+                  const current = document.getElementById("theme").getAttribute("href");
+                  const isDark = current.endsWith("theme-dark.css");
+                  setThemeIcon(isDark);
+                }});
                 </script>
 
-                <!-- Tabs -->
+                <!-- Section switching -->
                 <script>
-                function openTab(evt, tabId) {{
-                    var i, tabcontent, tablinks;
-                    tabcontent = document.getElementsByClassName("tab-content");
-                    for (i = 0; i < tabcontent.length; i++) {{
-                        tabcontent[i].classList.remove("active");
-                    }}
-                    tablinks = document.getElementsByClassName("tab-link");
-                    for (i = 0; i < tablinks.length; i++) {{
-                        tablinks[i].classList.remove("active");
-                    }}
-                    document.getElementById(tabId).classList.add("active");
-                    evt.currentTarget.classList.add("active");
-                }}
+                document.addEventListener("DOMContentLoaded", () => {{
+                    const items = document.querySelectorAll(".menu-item");
+                    const sections = document.querySelectorAll(".tab-content");
+
+                    items.forEach(item => {{
+                        item.addEventListener("click", () => {{
+                            const target = item.getAttribute("data-target");
+
+                            items.forEach(i => i.classList.remove("active"));
+                            item.classList.add("active");
+
+                            sections.forEach(sec => {{
+                                sec.classList.remove("active");
+                                if (sec.id === target) sec.classList.add("active");
+                            }});
+                        }});
+                    }});
+                }});
                 </script>
             </head>
 
@@ -128,29 +165,28 @@ class EDAReport:
                     <div class="top-bar">
                         <div class="title-block">
                             <h1>Antyx</h1>
-                            <p></p>
                             <span class="subtitle">Exploratory Data Analysis</span>
                         </div>
-                        <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()">
-                            <img src="/antyx/icons/toggle-icon.svg" class="theme-icon" alt="Toggle theme">
-                        </button>
+
+                        <nav class="main-menu">
+                            <ul>
+                                <li class="menu-item active" data-target="lines">Sample</li>
+                                <li class="menu-item" data-target="desc">Summary</li>
+                                <li class="menu-item" data-target="corr">Correlations</li>
+                                <li class="menu-item" data-target="viz">Visualizations</li>
+                                <li class="menu-item" data-target="prof">Profiles</li>
+
+                                <li class="theme-toggle">
+                                  <button id="theme-toggle" onclick="toggleTheme()">
+                                    <span id="theme-icon"></span>
+                                  </button>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
-                <div class="container">
-                    <div class="file-info">
-                        <p><strong>File:</strong> {file_name}</p>
-                        <p><strong>Loaded lines:</strong> {loaded_lines}</p>
-                        <p><strong>Omitted lines:</strong> {omitted_lines}</p>
-                        <p></p>
-                    </div>
 
-                    <div class="tabs">
-                        <div class="tab-link active" onclick="openTab(event, 'lines')">Sample</div>
-                        <div class="tab-link" onclick="openTab(event, 'desc')">Summary</div>
-                        <div class="tab-link" onclick="openTab(event, 'corr')">Correlations</div>
-                        <div class="tab-link" onclick="openTab(event, 'viz')">Visualizations</div>
-                        <div class="tab-link" onclick="openTab(event, 'prof')">Profiles</div>
-                    </div>
+                <div class="container">
 
                     <div id="lines" class="tab-content active">
                         {lines(self.df)}
@@ -167,6 +203,7 @@ class EDAReport:
                     <div id="viz" class="tab-content">
                         {visualizations(self.df, theme=self.theme)}
                     </div>
+
                     <div id="prof" class="tab-content">
                         {variable_profiles(self.df, theme=self.theme)}
                     </div>
