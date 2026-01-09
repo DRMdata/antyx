@@ -211,8 +211,8 @@ def describe_data(df, output_dir="."):
 
     export_html = f"""
     <div class="summary-export">
-        <a class="export-icon" href="{os.path.basename(excel_file)}" download>
-            <img src="antyx/icons/excel.svg" alt="Excel">
+        <a class="export-icon" href="/export/summary_excel">
+            <img src="/antyx/icons/excel.svg" alt="Excel">
         </a>
     </div>
     """

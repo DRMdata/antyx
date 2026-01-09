@@ -3,132 +3,140 @@ import csv
 import os
 import chardet
 
+try:
+    import polars as pl
+    POLARS_AVAILABLE = True
+except ImportError:
+    POLARS_AVAILABLE = False
+
+
 class DataLoader:
     """
-    Class for loading data from files in multiple formats (CSV, Excel, JSON, Parquet).
-
-    This class automatically detects the encoding (for text files),
-    delimiter (for CSV), and loads the data into a pandas DataFrame.
-
-    Attributes:
-        file_path (str): Path to the file to be loaded.
-        encoding (str): Detected or default encoding ('utf-8').
-        df (pd.DataFrame): DataFrame containing the loaded data.
-        skipped_lines (int): Number of lines skipped during loading.
-
-    Example:
-        >>> loader = DataLoader("data/dataset.csv")
-        >>> df = loader.load_data()
-        >>> print(df.head())
+    Universal DataLoader supporting:
+    - CSV, TXT, Excel, JSON, Parquet
+    - pandas DataFrame input
+    - polars DataFrame input (converted to pandas)
+    - optional Polars engine for faster file loading
     """
 
-    def __init__(self, file_path):
+    def __init__(self, file_path=None, df=None, use_polars=False):
         """
-        Initializes the data loader with the file path.
-
         Args:
             file_path (str): Path to the file to be loaded.
+            df (pandas.DataFrame or polars.DataFrame): Direct DataFrame input.
+            use_polars (bool): Whether to use Polars for loading files.
         """
 
         self.file_path = file_path
-        self.encoding = 'utf-8'
         self.df = None
+        self.encoding = "utf-8"
         self.skipped_lines = 0
+        self.use_polars = use_polars and POLARS_AVAILABLE
 
+        # CASE 1 → DataFrame provided directly
+        if df is not None:
+            self.df = self._load_from_dataframe(df)
+            return
+
+        # CASE 2 → File path provided
+        if file_path is None:
+            raise ValueError("You must provide either a file_path or a DataFrame.")
+
+    # ---------------------------------------------------------
+    # Load from DataFrame (pandas or polars)
+    # ---------------------------------------------------------
+    def _load_from_dataframe(self, df):
+        """Accept pandas or polars DataFrame."""
+        if POLARS_AVAILABLE and isinstance(df, pl.DataFrame):
+            return df.to_pandas()
+        elif isinstance(df, pd.DataFrame):
+            return df.copy()
+        else:
+            raise TypeError("df must be a pandas or polars DataFrame.")
+
+    # ---------------------------------------------------------
+    # File utilities
+    # ---------------------------------------------------------
     def _check_file_exists(self):
-        """
-        Checks if the file exists at the specified path.
-
-        Raises:
-            FileNotFoundError: If the file does not exist.
-            ValueError: If the path is not a file.
-        """
         if not os.path.exists(self.file_path):
-            raise FileNotFoundError(f"The file does not exist in the path: {self.file_path}")
+            raise FileNotFoundError(f"The file does not exist: {self.file_path}")
         if not os.path.isfile(self.file_path):
-            raise ValueError(f"The route is not a file: {self.file_path}")
+            raise ValueError(f"The path is not a file: {self.file_path}")
 
     def _detect_encoding(self):
-        """
-        Detects the encoding of the file (for CSV/TXT files).
-        """
-        with open(self.file_path, 'rb') as f:
-            raw_data = f.read(10000)
-            self.encoding = chardet.detect(raw_data)['encoding'] or 'utf-8'
-        print(f"Encoding detected: {self.encoding}")
+        with open(self.file_path, "rb") as f:
+            raw = f.read(10000)
+            self.encoding = chardet.detect(raw)["encoding"] or "utf-8"
 
     def _detect_delimiter(self):
-        """
-        Detects the delimiter for CSV files.
-
-        Returns:
-            str: Detected delimiter (e.g., ',' or ';').
-        """
-        with open(self.file_path, 'r', encoding=self.encoding) as f:
+        with open(self.file_path, "r", encoding=self.encoding) as f:
             sample = f.read(2048)
-            f.seek(0)
             try:
                 dialect = csv.Sniffer().sniff(sample)
-                print(f"Delimiter detected: {dialect.delimiter}")
                 return dialect.delimiter
             except csv.Error:
-                print(f"Delimiter detected: ','")
-                return ','  # Default delimiter
+                return ","
 
+    # ---------------------------------------------------------
+    # Loaders (pandas or polars)
+    # ---------------------------------------------------------
     def _load_csv_or_txt(self):
-        """
-        Loads CSV or TXT files into a DataFrame.
-        """
-        delimiter = self._detect_delimiter() if self.file_path.endswith('.csv') else '\t'
-        self.df = pd.read_csv(
+        delimiter = self._detect_delimiter() if self.file_path.endswith(".csv") else "\t"
+
+        if self.use_polars:
+            df = pl.read_csv(self.file_path, separator=delimiter, ignore_errors=True)
+            return df.to_pandas()
+
+        return pd.read_csv(
             self.file_path,
             encoding=self.encoding,
             sep=delimiter,
-            on_bad_lines='skip',
-            low_memory=False
+            on_bad_lines="skip",
+            low_memory=False,
         )
 
     def _load_excel(self):
-        """Loads Excel (XLSX, XLS) files into a DataFrame."""
-        self.df = pd.read_excel(self.file_path)
+        if self.use_polars:
+            df = pl.read_excel(self.file_path)
+            return df.to_pandas()
+        return pd.read_excel(self.file_path)
 
     def _load_json(self):
-        """Loads JSON files into a DataFrame."""
-        self.df = pd.read_json(self.file_path)
+        if self.use_polars:
+            df = pl.read_json(self.file_path)
+            return df.to_pandas()
+        return pd.read_json(self.file_path)
 
     def _load_parquet(self):
-        """Loads Parquet files into a DataFrame."""
-        self.df = pd.read_parquet(self.file_path)
+        if self.use_polars:
+            df = pl.read_parquet(self.file_path)
+            return df.to_pandas()
+        return pd.read_parquet(self.file_path)
 
+    # ---------------------------------------------------------
+    # Main loader
+    # ---------------------------------------------------------
     def load_data(self):
-        """
-        Loads the file based on its format and returns a DataFrame.
+        if self.df is not None:
+            return self.df  # Already loaded from DataFrame
 
-        Returns:
-            pd.DataFrame: DataFrame with the loaded data.
+        self._check_file_exists()
+        ext = os.path.splitext(self.file_path)[1].lower()
 
-        Raises:
-            ValueError: If the file format is not supported.
-        """
         try:
-            self._check_file_exists()
-            file_ext = os.path.splitext(self.file_path)[1].lower()
-
-            if file_ext in ('.csv', '.txt'):
+            if ext in (".csv", ".txt"):
                 self._detect_encoding()
-                self._load_csv_or_txt()
-            elif file_ext in ('.xlsx', '.xls'):
-                self._load_excel()
-            elif file_ext == '.json':
-                self._load_json()
-            elif file_ext == '.parquet':
-                self._load_parquet()
+                self.df = self._load_csv_or_txt()
+            elif ext in (".xlsx", ".xls"):
+                self.df = self._load_excel()
+            elif ext == ".json":
+                self.df = self._load_json()
+            elif ext == ".parquet":
+                self.df = self._load_parquet()
             else:
-                raise ValueError(f"Unsupported file format: {file_ext}")
+                raise ValueError(f"Unsupported file format: {ext}")
 
             self.skipped_lines = 0
-            print(f"✅ File loaded successfully. Total lines: {len(self.df)}")
-
             return self.df
 
         except Exception as e:

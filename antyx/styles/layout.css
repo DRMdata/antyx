@@ -97,3 +97,43 @@
     margin: 20px auto;
     padding: 0;
 }
+
+/* Utilities menu */
+.utilities-menu {
+    position: relative;
+    font-size: 1rem;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.utilities-trigger {
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.utilities-trigger:hover {
+    background-color: var(--table-hover-bg);
+}
+
+.utilities-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 32px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    min-width: 180px;
+    z-index: 2000;
+}
+
+.utilities-dropdown .utility-item {
+    padding: 10px 14px;
+    transition: background-color 0.2s ease;
+}
+
+.utilities-dropdown .utility-item:hover {
+    background-color: var(--table-hover-bg);
+}
