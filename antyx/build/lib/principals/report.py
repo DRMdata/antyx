@@ -238,9 +238,9 @@ class EDAReport:
                     </div>
 
                     <div class="utilities-menu">
-                        <div class="utilities-trigger">Utilities ▾</div>
+                        <div class="utilities-trigger">Menu ▾</div>
                         <div class="utilities-dropdown">
-                            <div class="utility-item" onclick="downloadReport()">Download report</div>
+                            <div class="utility-item" onclick="downloadReport()">Download</div>
                         </div>
                     </div>
 
@@ -264,14 +264,7 @@ class EDAReport:
 
             <div class="container">
                 <div id="lines" class="tab-content active">
-                    {lines(
-                        self.df,
-                        file_name=os.path.basename(self.file_path) if self.file_path else "",
-                        total_records=self.df.shape[0] + self.skipped_lines,
-                        omitted_records=self.skipped_lines,
-                        theme=self.theme,
-                        file_path=self.file_path
-                    )}
+                    {lines(self.df)}
                 </div>
 
                 <div id="desc" class="tab-content">
@@ -496,14 +489,7 @@ class EDAReport:
                 <div class="container">
 
                     <div id="lines" class="tab-content active">
-                        {lines(
-                            self.df,
-                            file_name=os.path.basename(self.file_path) if self.file_path else "",
-                            total_records=self.df.shape[0] + self.skipped_lines,
-                            omitted_records=self.skipped_lines,
-                            theme=self.theme,
-                            file_path=self.file_path
-                        )}
+                        {lines(self.df)}
                     </div>
 
                     <div id="desc" class="tab-content">

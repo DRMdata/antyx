@@ -100,3 +100,47 @@
     width: 28px;
     height: 28px;
 }
+
+.var-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px 16px;
+    margin: 10px 0 20px 0;
+}
+
+.var-type-item {
+    background: var(--card-bg, #f5f5f5);
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.var-type-item .label {
+    font-weight: 600;
+}
+
+.var-type-item .value {
+    font-weight: 700;
+}
+
+.var-types-column p {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+.var-types-indented {
+    margin-left: 20px;   /* Indentación respecto a "Variables:" */
+    margin-top: 6px;    /* Ajuste visual */
+    margin-bottom: 15px;
+}
+
+.var-type-line {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+.var-type-label {
+    font-weight: 600;
+}

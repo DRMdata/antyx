@@ -87,13 +87,21 @@ class DataLoader:
             df = pl.read_csv(self.file_path, separator=delimiter, ignore_errors=True)
             return df.to_pandas()
 
-        return pd.read_csv(
+        # Contamos líneas totales antes de leer (para CSV/TXT)
+        with open(self.file_path, "r", encoding=self.encoding) as f:
+            total_lines = sum(1 for _ in f)
+
+        df = pd.read_csv(
             self.file_path,
             encoding=self.encoding,
             sep=delimiter,
             on_bad_lines="skip",
             low_memory=False,
         )
+        # Calculamos cuántas filas se perdieron
+        self.skipped_lines = total_lines - len(df)
+
+        return df
 
     def _load_excel(self):
         if self.use_polars:

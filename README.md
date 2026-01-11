@@ -11,8 +11,15 @@ Antyx is an automated EDA engine designed to generate fast, structured and profe
 ## Installation
 
 Pypi
+
+Basic dependencies:
 ```bash
 pip install antyx
+```
+
+All dependencies (extras included)
+```bash
+pip install antyx[all]
 ```
 
 GitHub

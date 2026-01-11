@@ -1,0 +1,9 @@
+chardet==5.2.0
+Flask==3.1.2
+matplotlib==3.10.8
+numpy==2.4.0
+pandas==2.3.3
+plotly==6.5.0
+polars==1.36.1
+requests==2.32.5
+seaborn==0.13.2
