@@ -1,16 +1,18 @@
 /* Header sticky */
 .header {
+    width: 100%;
     position: sticky;
-    top: 0;
+    top: 20;
     z-index: 1000;
     background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
-    padding: 12px 0;
+    padding: 20px 20;
 }
 
 /* Top bar layout */
 .top-bar {
     width: 90%;
+    max-width: 1500px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -39,19 +41,28 @@
     align-items: center;
 }
 
+/* Estado base */
 .main-menu .menu-item {
     cursor: pointer;
     font-size: 1rem;
     color: var(--text-color);
-    transition: color 0.2s ease;
 }
 
-.main-menu .menu-item:hover {
+/* Texto base dentro del item */
+.main-menu .menu-item span {
+    font-weight: 400;
+    transition: color 0.2s ease, font-weight 0.2s ease;
+}
+
+/* Activo (solo el texto) */
+.main-menu .menu-item.active span {
+    font-weight: 700;
     color: var(--accent-color);
 }
 
-.main-menu .menu-item.active {
-    font-weight: bold;
+/* Hover: nunca negrita, aunque sea activo */
+.main-menu .menu-item:hover span {
+    font-weight: 400;
     color: var(--accent-color);
 }
 
@@ -94,6 +105,7 @@
 
 .container {
     width: 90%;
+    max-width: 1500px;
     margin: 20px auto;
     padding: 0;
 }

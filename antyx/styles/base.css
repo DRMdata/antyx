@@ -56,12 +56,13 @@ body {
 
 .header {
     width: 100%;
+    margin: 0px auto;
     background-color: var(--card-bg);
     border-bottom: 1px solid var(--table-border-color);
     position: sticky;
-    top: 0;
+    top: 20;
     z-index: 1000;
-    padding: 12px 20px;
+    padding: 20px 20px;
 }
 
 h1 {
@@ -73,6 +74,7 @@ h1 {
 
 .container {
     width: 90%;
+    max-width: 1500px;
     margin: 20px auto;
 }
 

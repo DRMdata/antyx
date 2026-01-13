@@ -246,11 +246,21 @@ class EDAReport:
 
                     <nav class="main-menu">
                         <ul>
-                            <li class="menu-item active" data-target="lines">Sample</li>
-                            <li class="menu-item" data-target="desc">Summary</li>
-                            <li class="menu-item" data-target="corr">Correlations</li>
-                            <li class="menu-item" data-target="viz">Visualizations</li>
-                            <li class="menu-item" data-target="prof">Profiles</li>
+                            <li class="menu-item active" data-target="lines">
+                                <span>Sample</span>
+                            </li>
+                            <li class="menu-item" data-target="desc">
+                                <span>Summary</span>
+                            </li>
+                            <li class="menu-item" data-target="corr">
+                                <span>Correlations</span>
+                            </li>
+                            <li class="menu-item" data-target="viz">
+                                <span>Visualizations</span>
+                            </li>
+                            <li class="menu-item" data-target="prof">
+                                <span>Profiles</span>
+                            </li>
 
                             <li class="theme-toggle">
                               <button id="theme-toggle" onclick="toggleTheme()">
@@ -469,19 +479,29 @@ class EDAReport:
                         </div>
 
                         <div class="utilities-menu">
-                            <div class="utilities-trigger">Menu ▾</div>
+                            <div class="utilities-trigger">Utilities ▾</div>
                             <div class="utilities-dropdown">
-                                <div class="utility-item" onclick="downloadReport()">Download</div>
+                                <div class="utility-item" onclick="downloadReport()">Download html</div>
                             </div>
                         </div>
 
                         <nav class="main-menu">
                             <ul>
-                                <li class="menu-item active" data-target="lines">Sample</li>
-                                <li class="menu-item" data-target="desc">Summary</li>
-                                <li class="menu-item" data-target="corr">Correlations</li>
-                                <li class="menu-item" data-target="viz">Visualizations</li>
-                                <li class="menu-item" data-target="prof">Profiles</li>
+                                <li class="menu-item active" data-target="lines">
+                                    <span>Sample</span>
+                                </li>
+                                <li class="menu-item" data-target="desc">
+                                    <span>Summary</span>
+                                </li>
+                                <li class="menu-item" data-target="corr">
+                                    <span>Correlations</span>
+                                </li>
+                                <li class="menu-item" data-target="viz">
+                                    <span>Visualizations</span>
+                                </li>
+                                <li class="menu-item" data-target="prof">
+                                    <span>Profiles</span>
+                                </li>
 
                                 <li class="theme-toggle">
                                   <button id="theme-toggle" onclick="toggleTheme()">
