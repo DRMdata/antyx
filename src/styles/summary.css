@@ -1,0 +1,335 @@
+/* ============================
+   SUMMARY — NUEVA ESTÉTICA
+   ============================ */
+
+#desc {
+    padding: 24px 0;
+}
+
+/* Títulos */
+#desc h2 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+#desc .summary-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 10px 0 6px 0;
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+}
+
+/* Bloques */
+.summary-block {
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.summary-block.summary-general {
+    margin-top: 24px;
+}
+
+/* Tablas (reutilizamos tu estilo base, pero ajustamos algo) */
+#desc .table-custom {
+    border-collapse: collapse;
+    table-layout: auto;
+    width: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#desc .table-custom th,
+#desc .table-custom td {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--table-border-color);
+    border-bottom: 1px solid var(--table-border-color);
+    padding: 6px 8px;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+}
+
+#desc .table-custom th {
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+    text-align: right;
+    font-weight: 600;
+}
+
+#desc .table-custom td:first-child,
+#desc .table-custom th:first-child {
+    text-align: left;
+}
+
+/* Nombre variable algo más ancho en el catálogo general */
+#desc .summary-general .table-custom th:nth-child(1),
+#desc .summary-general .table-custom td:nth-child(1) {
+    min-width: 200px;
+}
+
+/* Fuente monoespaciada solo para valores, no para encabezados */
+#desc .table-custom td {
+    font-family: 'Courier New', monospace;
+}
+
+/* Hover fila */
+#desc .table-custom tr:hover {
+    background-color: var(--table-hover-bg);
+}
+
+/* Calidad: semáforos en celdas */
+#desc .table-custom td.quality-good {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+#desc .table-custom td.quality-medium {
+    color: #ffb300;
+    font-weight: 600;
+}
+
+#desc .table-custom td.quality-bad {
+    color: #c62828;
+    font-weight: 600;
+}
+
+/* Contenedor general de tablas */
+#desc .table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 12px 0;
+}
+
+/* ============================
+   DATA QUALITY INSIGHTS
+   ============================ */
+
+.summary-quality {
+    margin-bottom: 24px;
+}
+
+.summary-quality-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.summary-quality-group {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.summary-quality-group h4 {
+    margin: 0 0 6px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.summary-quality-group ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.summary-quality-group li {
+    margin-bottom: 3px;
+    color: var(--muted-text-color);
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+@media (max-width: 900px) {
+    #desc .table-custom th,
+    #desc .table-custom td {
+        font-size: 0.8rem;
+        padding: 4px 6px;
+    }
+}
+
+/* ============================
+   SUMMARY — NUEVA ESTÉTICA
+   ============================ */
+
+#desc {
+    padding: 24px 0;
+}
+
+/* Títulos */
+#desc h2 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+#desc .summary-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 10px 0 6px 0;
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+}
+
+/* Bloques */
+.summary-block {
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.summary-block.summary-general {
+    margin-top: 24px;
+}
+
+/* Tablas (reutilizamos tu estilo base, pero ajustamos algo) */
+#desc .table-custom {
+    border-collapse: collapse;
+    table-layout: auto;
+    width: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#desc .table-custom th,
+#desc .table-custom td {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--table-border-color);
+    border-bottom: 1px solid var(--table-border-color);
+    padding: 6px 8px;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+}
+
+#desc .table-custom th {
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+    text-align: right;
+    font-weight: 600;
+}
+
+#desc .table-custom td:first-child,
+#desc .table-custom th:first-child {
+    text-align: left;
+}
+
+/* Nombre variable algo más ancho en el catálogo general */
+#desc .summary-general .table-custom th:nth-child(1),
+#desc .summary-general .table-custom td:nth-child(1) {
+    min-width: 200px;
+}
+
+/* Fuente monoespaciada solo para valores, no para encabezados */
+#desc .table-custom td {
+    font-family: 'Courier New', monospace;
+}
+
+/* Hover fila */
+#desc .table-custom tr:hover {
+    background-color: var(--table-hover-bg);
+}
+
+/* Calidad: semáforos en celdas */
+#desc .table-custom td.quality-good {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+#desc .table-custom td.quality-medium {
+    color: #ffb300;
+    font-weight: 600;
+}
+
+#desc .table-custom td.quality-bad {
+    color: #c62828;
+    font-weight: 600;
+}
+
+/* Contenedor general de tablas */
+#desc .table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 12px 0;
+}
+
+/* ============================
+   DATA QUALITY INSIGHTS
+   ============================ */
+
+.summary-quality {
+    margin-bottom: 24px;
+}
+
+.summary-quality-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.summary-quality-group {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.summary-quality-group h4 {
+    margin: 0 0 6px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.summary-quality-group ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.summary-quality-group li {
+    margin-bottom: 3px;
+    color: var(--muted-text-color);
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+@media (max-width: 900px) {
+    #desc .table-custom th,
+    #desc .table-custom td {
+        font-size: 0.8rem;
+        padding: 4px 6px;
+    }
+}
+
+.quality-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.quality-good { background-color: #4caf50; }
+.quality-medium { background-color: #ffb300; }
+.quality-bad { background-color: #e53935; }

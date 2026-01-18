@@ -12,10 +12,10 @@ from antyx.utils.lines import lines
 from antyx.utils.summary import (
     describe_data,
     build_summary_dataframes,
-    export_summary
 )
 from antyx.utils.correlations import correlation_analysis
 from antyx.utils.profiles import variable_profiles
+from antyx.utils.overview import overview
 from .data_loader import DataLoader
 
 
@@ -137,6 +137,7 @@ class EDAReport:
             "styles/summary.css",
             "styles/profiles.css",
             "styles/visualizations.css",
+            "styles/overview.css",
             f"styles/theme-{self.theme}.css",
         ]
         return "\n".join(self._embed_css(path) for path in css_files)
@@ -145,6 +146,51 @@ class EDAReport:
         url = "https://cdn.plot.ly/plotly-latest.min.js"
         js = requests.get(url).text
         return f"<script>\n{js}\n</script>"
+
+    def _compute_summary_stats(self):
+        df = self.df
+
+        total_cells = df.shape[0] * df.shape[1]
+        total_missing = df.isna().sum().sum()
+        missing_pct = (total_missing / total_cells * 100) if total_cells else 0
+
+        dup_count = df.duplicated().sum()
+        dup_pct = (dup_count / df.shape[0] * 100) if df.shape[0] else 0
+
+        # High cardinality
+        high_card = sum(df[col].nunique(dropna=True) > 50 for col in df.columns)
+
+        # Memory
+        size_bytes = df.memory_usage(deep=True).sum()
+
+        def format_size(n):
+            for unit in ["B", "KB", "MB", "GB"]:
+                if n < 1024:
+                    return f"{n:.2f} {unit}"
+                n /= 1024
+            return f"{n:.2f} TB"
+
+        memory_str = format_size(size_bytes)
+
+        # Leakage
+        leakage = any(col.lower() in ["target", "label", "outcome", "y", "class"] for col in df.columns)
+
+        # Feature engineering complexity
+        from antyx.utils.types import detect_var_type
+        fe_complexity = sum(
+            detect_var_type(df[col]) in ["categorical", "datetime", "other"] or
+            df[col].nunique(dropna=True) > 50
+            for col in df.columns
+        )
+
+        return {
+            "missing_pct": missing_pct,
+            "dup_pct": dup_pct,
+            "high_cardinality": high_card,
+            "memory_str": memory_str,
+            "leakage_risk": leakage,
+            "fe_complexity": fe_complexity,
+        }
 
     # ---------------------------------------------------------
     # Generate standalone HTML
@@ -203,7 +249,7 @@ class EDAReport:
                 document.body.classList.add("dark");
               }}
               const isDark = document.body.classList.contains("dark");
-              setThemeIcon(isDark);
+              setThemeIcon(isDark); 
             }});
             </script>
 
@@ -211,18 +257,26 @@ class EDAReport:
             document.addEventListener("DOMContentLoaded", () => {{
                 const items = document.querySelectorAll(".menu-item");
                 const sections = document.querySelectorAll(".tab-content");
-
+            
                 items.forEach(item => {{
                     item.addEventListener("click", () => {{
                         const target = item.getAttribute("data-target");
-
+            
+                        // activar item
                         items.forEach(i => i.classList.remove("active"));
                         item.classList.add("active");
-
+            
+                        // mostrar solo la sección seleccionada
                         sections.forEach(sec => {{
-                            sec.classList.remove("active");
-                            if (sec.id === target) sec.classList.add("active");
+                            if (sec.id === target) {{
+                                sec.classList.add("active");
+                            }} else {{
+                                sec.classList.remove("active");
+                            }}
                         }});
+            
+                        // subir al inicio
+                        window.scrollTo({{ top: 0, behavior: "instant" }});
                     }});
                 }});
             }});
@@ -246,8 +300,8 @@ class EDAReport:
 
                     <nav class="main-menu">
                         <ul>
-                            <li class="menu-item active" data-target="lines">
-                                <span>Sample</span>
+                            <li class="menu-item active" data-target="overview">
+                                <span>Overview</span>
                             </li>
                             <li class="menu-item" data-target="desc">
                                 <span>Summary</span>
@@ -273,14 +327,15 @@ class EDAReport:
             </div>
 
             <div class="container">
-                <div id="lines" class="tab-content active">
-                    {lines(
+                <div id="overview" class="tab-content active">
+                    {overview(
                         self.df,
                         file_name=os.path.basename(self.file_path) if self.file_path else "",
                         total_records=self.df.shape[0] + self.skipped_lines,
                         omitted_records=self.skipped_lines,
                         theme=self.theme,
-                        file_path=self.file_path
+                        file_path=self.file_path,
+                        summary_stats=self._compute_summary_stats()
                     )}
                 </div>
 
@@ -395,6 +450,7 @@ class EDAReport:
                 <link rel="stylesheet" href="/antyx/styles/lines.css">
                 <link rel="stylesheet" href="/antyx/styles/summary.css">
                 <link rel="stylesheet" href="/antyx/styles/profiles.css">
+                <link rel="stylesheet" href="/antyx/styles/overview.css">
                 <link rel="stylesheet" href="/antyx/styles/visualizations.css">
 
                 <link id="theme" rel="stylesheet" href="/antyx/styles/theme-{self.theme}.css">
@@ -452,18 +508,26 @@ class EDAReport:
                 document.addEventListener("DOMContentLoaded", () => {{
                     const items = document.querySelectorAll(".menu-item");
                     const sections = document.querySelectorAll(".tab-content");
-
+                
                     items.forEach(item => {{
                         item.addEventListener("click", () => {{
                             const target = item.getAttribute("data-target");
-
+                
+                            // activar item
                             items.forEach(i => i.classList.remove("active"));
                             item.classList.add("active");
-
+                
+                            // mostrar solo la sección seleccionada
                             sections.forEach(sec => {{
-                                sec.classList.remove("active");
-                                if (sec.id === target) sec.classList.add("active");
+                                if (sec.id === target) {{
+                                    sec.classList.add("active");
+                                }} else {{
+                                    sec.classList.remove("active");
+                                }}
                             }});
+                
+                            // subir al inicio
+                            window.scrollTo({{ top: 0, behavior: "instant" }});
                         }});
                     }});
                 }});
@@ -487,8 +551,8 @@ class EDAReport:
 
                         <nav class="main-menu">
                             <ul>
-                                <li class="menu-item active" data-target="lines">
-                                    <span>Sample</span>
+                                <li class="menu-item active" data-target="overview">
+                                    <span>Overview</span>
                                 </li>
                                 <li class="menu-item" data-target="desc">
                                     <span>Summary</span>
@@ -515,14 +579,15 @@ class EDAReport:
 
                 <div class="container">
 
-                    <div id="lines" class="tab-content active">
-                        {lines(
+                    <div id="overview" class="tab-content active">
+                        {overview(
                             self.df,
                             file_name=os.path.basename(self.file_path) if self.file_path else "",
                             total_records=self.df.shape[0] + self.skipped_lines,
                             omitted_records=self.skipped_lines,
                             theme=self.theme,
-                            file_path=self.file_path
+                            file_path=self.file_path,
+                            summary_stats=self._compute_summary_stats()
                         )}
                     </div>
 

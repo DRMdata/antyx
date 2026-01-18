@@ -1,12 +1,21 @@
-/* Header sticky */
 .header {
     width: 100%;
-    position: sticky;
-    top: 20;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
     background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
-    padding: 20px 20;
+    padding: 20px 20px;
+}
+
+/* Contenedor principal debajo del header fijo */
+.container {
+    width: 90%;
+    max-width: 1500px;
+    margin: 100px auto 20px auto;  /* 100px ≈ altura header */
+    padding: 0;
 }
 
 /* Top bar layout */
@@ -101,13 +110,6 @@
 
 .tab-content.active {
     display: block;
-}
-
-.container {
-    width: 90%;
-    max-width: 1500px;
-    margin: 20px auto;
-    padding: 0;
 }
 
 /* Utilities menu */
