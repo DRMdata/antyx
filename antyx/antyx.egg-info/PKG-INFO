@@ -1,0 +1,70 @@
+Metadata-Version: 2.4
+Name: antyx
+Version: 0.1.8
+Summary: Antyx is an automated EDA engine designed to generate fast, structured and professional exploratory reports from any tabular dataset.
+Author-email: Daniel Rodrigálvarez Morente <drm.datos@email.com>
+License: MIT
+Project-URL: Homepage, https://github.com/drmdata/antyx
+Project-URL: Documentation, https://github.com/drmdata/antyx/wiki
+Project-URL: Source, https://github.com/drmdata/antyx
+Project-URL: Issues, https://github.com/drmdata/antyx/issues
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: chardet==5.2.0
+Requires-Dist: pydantic==2.12.5
+Requires-Dist: pandas==2.3.3
+Requires-Dist: numpy==2.4.1
+Requires-Dist: matplotlib==3.10.8
+Requires-Dist: seaborn==0.13.2
+Requires-Dist: plotly==6.5.2
+Requires-Dist: polars==1.37.1
+Requires-Dist: openpyxl==3.1.5
+Requires-Dist: xlsxwriter==3.2.9
+Requires-Dist: requests==2.32.5
+Requires-Dist: tqdm==4.67.1
+Requires-Dist: Flask==3.1.2
+
+# **Antyx**
+
+Version: 0.1
+
+Antyx is an automated EDA engine designed to generate fast, structured and professional exploratory reports from any tabular dataset.
+
+* PyPI package: https://pypi.org/project/Antyx/
+* Free software: MIT License
+* Documentation: https://Antix.readthedocs.io.
+
+## Installation
+
+Pypi
+
+Basic dependencies:
+```bash
+pip install antyx
+```
+
+All dependencies (extras included)
+```bash
+pip install antyx[all]
+```
+
+GitHub
+```bash
+git clone https://github.com/DRMdata/antyx.git
+cd antyx
+pip install -e .
+```
+
+## Features
+
+Statistical profiling
+
+Correlation analysis
+
+Outlier detection
+
+Variable typing
+
+Clean HTML reports
+
+Pandas & Polars compatible

@@ -49,10 +49,13 @@ def plot_scatter(df, cols, theme_cfg):
     return fig
 
 def plot_bars(df, col, theme_cfg):
-    vc = df[col].value_counts().reset_index()
-    vc.columns = ["category", "count"]
-    fig = px.bar(vc, x="category", y="count")
+    counts = df[col].value_counts(dropna=True)
+    data = counts.reset_index()
+    data.columns = ["category", "count"]
+
+    fig = px.bar(data, x="category", y="count", text="count")
     fig.update_layout(**theme_cfg)
+    fig.update_traces(textposition="outside")
     return fig
 
 def plot_heatmap(df, cols, theme_cfg):

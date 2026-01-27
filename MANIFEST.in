@@ -1,0 +1,17 @@
+recursive-include antyx/styles *.css
+recursive-include antyx/templates *.html
+recursive-include antyx/icons *.png
+recursive-include antyx/icons *.svg
+recursive-include antyx/js *.js
+recursive-include antyx *.json
+recursive-include antyx *.txt
+
+prune utilidades_gestion
+prune tests
+prune txt
+prune docs
+prune site
+prune build
+prune dist
+prune .venv
+prune .git

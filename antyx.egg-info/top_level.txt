@@ -1,1 +1,6 @@
 antyx
+build
+data
+dist
+docs
+site

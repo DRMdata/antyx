@@ -373,7 +373,7 @@ class EDAReport:
                 <title>Antyx</title>
 
                 <!-- Plotly -->
-                <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+                <script antyx="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
                 <!-- CSS -->
                 <link rel="stylesheet" href="/antyx/styles/base.css">

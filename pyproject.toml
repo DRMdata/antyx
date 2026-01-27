@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=69.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "antyx"
+version = "0.1.10"
+description = "Antyx is an automated EDA engine designed to generate fast, structured and professional exploratory reports from any tabular dataset."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Daniel Rodrigálvarez Morente", email = "drm.datos@email.com" }
+]
+
+dependencies = [
+    "chardet==5.2.0",
+    "pydantic==2.12.5",
+    "pandas==2.3.3",
+    "numpy==2.4.1",
+    "matplotlib==3.10.8",
+    "seaborn==0.13.2",
+    "plotly==6.5.2",
+    "polars==1.37.1",
+    "openpyxl==3.1.5",
+    "xlsxwriter==3.2.9",
+    "requests==2.32.5",
+    "tqdm==4.67.1",
+    "Flask==3.1.2"
+]
+
+[project.urls]
+Homepage = "https://github.com/drmdata/antyx"
+Documentation = "https://github.com/drmdata/antyx/wiki"
+Source = "https://github.com/drmdata/antyx"
+Issues = "https://github.com/drmdata/antyx/issues"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = [
+    "tests",
+    "docs",
+    "utilidades_gestion",
+    "txt",
+    "site",
+]

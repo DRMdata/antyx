@@ -6,16 +6,16 @@ __pycache__/
 .DS_Store
 .idea/
 
-*.ipynb
-
 code_start_py
-
-data/
 
 requeriments.txt
 
-updates/
 
-*.html
-
+# Archivos utilizados en el desarrollo del proyecto
+utilidades_gestion/
 txt/
+data/
+
+# Outputs del proyecto
+*.ipynb
+*.html
