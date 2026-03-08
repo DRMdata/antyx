@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: antyx
-Version: 0.1.10
+Version: 0.1.11
 Summary: Antyx is an automated EDA engine designed to generate fast, structured and professional exploratory reports from any tabular dataset.
 Author-email: Daniel Rodrigálvarez Morente <drm.datos@email.com>
 License: MIT

@@ -7,7 +7,7 @@
     grid-template-columns: 260px 1fr;
     gap: 20px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 50px;
 }
 
 /* ============================
@@ -23,13 +23,14 @@
     overflow-y: auto;
     position: sticky;
     top: 80px;
+    margin-top: 55px;
 }
 
 .vp-sidebar-title {
     margin: 0 0 8px 0;
-    font-size: 0.95rem;
-    color: var(--muted-text-color);
-    text-transform: uppercase;
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    text-transform: none;
     letter-spacing: 0.05em;
 }
 

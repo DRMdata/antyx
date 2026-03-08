@@ -2,6 +2,7 @@ MANIFEST.in
 README.md
 pyproject.toml
 ./antyx/__init__.py
+./antyx/assets.py
 ./antyx/build/lib/principals/__init__.py
 ./antyx/build/lib/principals/data_loader.py
 ./antyx/build/lib/principals/report.py
@@ -19,6 +20,8 @@ pyproject.toml
 ./antyx/principals/data_loader.py
 ./antyx/principals/report.py
 ./antyx/styles/__init__.py
+./antyx/tests/__init__.py
+./antyx/tests/test_core.py
 ./antyx/utils/__init__.py
 ./antyx/utils/correlations.py
 ./antyx/utils/lines.py
@@ -44,11 +47,16 @@ pyproject.toml
 ./build/lib/antyx/utils/utils.py
 ./build/lib/antyx/utils/visualizations.py
 antyx/__init__.py
+antyx/assets.py
 antyx.egg-info/PKG-INFO
 antyx.egg-info/SOURCES.txt
 antyx.egg-info/dependency_links.txt
 antyx.egg-info/requires.txt
 antyx.egg-info/top_level.txt
+antyx/antyx.egg-info/SOURCES.txt
+antyx/antyx.egg-info/dependency_links.txt
+antyx/antyx.egg-info/requires.txt
+antyx/antyx.egg-info/top_level.txt
 antyx/build/lib/principals/__init__.py
 antyx/build/lib/principals/data_loader.py
 antyx/build/lib/principals/report.py
@@ -84,6 +92,8 @@ antyx/styles/tabs.css
 antyx/styles/theme-dark.css
 antyx/styles/theme-light.css
 antyx/styles/visualizations.css
+antyx/tests/__init__.py
+antyx/tests/test_core.py
 antyx/utils/__init__.py
 antyx/utils/correlations.py
 antyx/utils/lines.py

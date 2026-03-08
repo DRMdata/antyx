@@ -6,9 +6,6 @@
     /* gap: 32px;  <-- eliminado */
 }
 
-/* Si quieres la estructura en columna, envuelve el contenido en un contenedor interno,
-   por ejemplo <div class="overview-inner">...</div> y aplica flex ahí. */
-
 /* HEADER (NO sticky) */
 .ov-header {
     padding: 12px 0;

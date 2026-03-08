@@ -4,18 +4,18 @@ import pathlib
 import requests
 from flask import Flask, request, Response
 
-from antyx.utils.visualizations import (
+from antyx.principals.visualizations import (
     visualizations,
     generate_viz_html,
 )
-from antyx.utils.lines import lines
-from antyx.utils.summary import (
+from antyx.principals.lines import lines
+from antyx.principals.summary import (
     describe_data,
     build_summary_dataframes,
     export_summary
 )
-from antyx.utils.correlations import correlation_analysis
-from antyx.utils.profiles import variable_profiles
+from antyx.principals.correlations import correlation_analysis
+from antyx.principals.profiles import variable_profiles
 from .data_loader import DataLoader
 
 

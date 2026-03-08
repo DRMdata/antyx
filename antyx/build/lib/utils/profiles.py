@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 
-from antyx.utils.visualizations import (
+from antyx.principals.visualizations import (
     plot_hist,
     plot_box,
     plot_bars,

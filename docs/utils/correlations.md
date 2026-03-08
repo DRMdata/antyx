@@ -30,7 +30,7 @@ The script requires the following Python libraries:
 
 ```python
 import pandas as pd
-from antyx.utils.correlations import correlation_analysis
+from antyx.principals.correlations import correlation_analysis
 
 # Sample DataFrame
 data = {

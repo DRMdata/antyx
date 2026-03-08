@@ -22,7 +22,7 @@
     border-bottom: 1px solid var(--table-border-color);
     padding: 8px;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible;
     text-overflow: ellipsis;
     text-align: right;
 }

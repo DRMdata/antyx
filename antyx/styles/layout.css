@@ -57,22 +57,37 @@
     color: var(--text-color);
 }
 
-/* Texto base dentro del item */
+/* Texto base: inline-block para controlar dimensiones */
 .main-menu .menu-item span {
-    font-weight: 400;
-    transition: color 0.2s ease, font-weight 0.2s ease;
+  display: inline-block;
+  font-weight: 400;
+  transition: color 0.2s ease, font-weight 0.2s ease;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
-/* Activo (solo el texto) */
+/* Pseudo-elemento en el flujo que reserva el ancho de la versión en negrita */
+.main-menu .menu-item span::after {
+  content: attr(data-text);
+  display: inline-block;      /* importante: en el flujo */
+  visibility: hidden;         /* invisible pero ocupa espacio */
+  font-weight: 700;           /* ancho reservado según negrita */
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1;             /* evita añadir altura extra */
+}
+}
+
+/* Activo (solo el texto visible) */
 .main-menu .menu-item.active span {
-    font-weight: 700;
-    color: var(--accent-color);
+  font-weight: 700;
+  color: var(--accent-color);
 }
 
 /* Hover: nunca negrita, aunque sea activo */
 .main-menu .menu-item:hover span {
-    font-weight: 400;
-    color: var(--accent-color);
+  font-weight: 400;
+  color: var(--accent-color);
 }
 
 /* Theme toggle integrated into menu */

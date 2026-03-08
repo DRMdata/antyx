@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "antyx"
-version = "0.1.10"
+version = "0.1.11"
 description = "Antyx is an automated EDA engine designed to generate fast, structured and professional exploratory reports from any tabular dataset."
 readme = "README.md"
 requires-python = ">=3.10"
