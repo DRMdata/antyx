@@ -1,171 +1,94 @@
-import pandas as pd
-import plotly.express as px
-import calendar
-
+import numpy as np
+from antyx.utils.types import detect_var_type
 from antyx.principals.visualizations import (
     plot_hist,
     plot_box,
     plot_bars,
+    plot_violin,
+    plot_heatmap,
+    plot_cdf,
+    plot_qq,
+    plot_donut,
+    plot_pareto,
+    plot_kde,
+    plot_treemap,
+    plot_scatter,
+    plot_scatter_index,
+    plot_datetime_heatmap,
+    plot_datetime_histogram,
+    plot_datetime_calendar,
+    plot_acf,
+    plot_lag,
+    plot_timeseries,
+    plot_interarrival,
+    plot_hour_distribution,
+    plot_month_day_heatmap,
+    plot_weekday_distribution,
     PLOTLY_LIGHT,
     PLOTLY_DARK,
 )
-from antyx.utils.types import detect_var_type
-
 
 # ============================
 # FIGURAS
 # ============================
 
 def profile_numeric_figs(df, col, theme_cfg):
-    return [
-        ("Histogram", plot_hist(df, col, theme_cfg)),
-        ("Boxplot", plot_box(df, col, theme_cfg)),
-    ]
+    figs = []
+
+    def add(title, fig):
+        if fig is not None:
+            figs.append((title, fig))
+
+    add("Histogram", plot_hist(df, col, theme_cfg))
+    add("Violin", plot_violin(df, col, theme_cfg))
+    add("QQ-plot", plot_qq(df, col, theme_cfg))
+    add("CDF", plot_cdf(df, col, theme_cfg))
+    #add("Scatter vs index", plot_scatter_index(df, col, theme_cfg))
+
+    return figs
 
 
 def profile_categorical_figs(df, col, theme_cfg):
-    return [("Bar chart", plot_bars(df, col, theme_cfg))]
+    figs = []
+
+    def add(title, fig):
+        if fig is not None:
+            figs.append((title, fig))
+
+    add("Pareto chart", plot_pareto(df, col, theme_cfg))
+
+    return figs
 
 
 def profile_binary_figs(df, col, theme_cfg):
-    return [("Bar chart", plot_bars(df, col, theme_cfg))]
-
-
-# ============================================================
-# Helper: convertir Serie a DataFrame con DatetimeIndex
-# ============================================================
-
-def _to_dt_index(s):
-    s = pd.to_datetime(s.dropna(), dayfirst=True, errors="coerce")
-    s = s.dropna()
-
-    df = s.to_frame(name="value")
-    df.index = df["value"]
-    return df
-
-
-# ============================================================
-# 1. HISTOGRAMA TEMPORAL INTELIGENTE
-# ============================================================
-
-def fig_datetime_histogram(s, theme_cfg):
-    df = _to_dt_index(s)
-    if df.empty:
-        return None
-
-    range_days = (df.index.max() - df.index.min()).days
-
-    if range_days <= 31:
-        freq = "D"
-    elif range_days <= 180:
-        freq = "W"
-    elif range_days <= 730:
-        freq = "M"
-    else:
-        freq = "YE"
-
-    grouped = df.groupby(pd.Grouper(freq=freq)).size().reset_index(name="count")
-
-    fig = px.bar(grouped, x=grouped.columns[0], y="count")
-    fig.update_layout(**theme_cfg)
-    return ("Distribution over time", fig)
-
-
-# ============================================================
-# 2. HEATMAP DÍA × HORA
-# ============================================================
-
-def fig_datetime_heatmap(s, theme_cfg):
-    df = _to_dt_index(s)
-    if df.empty:
-        return None
-    if df.index.hour.nunique() <= 1:
-        return None
-
-    # Dataframe base
-    df2 = pd.DataFrame({
-        "date": df.index.date,
-        "hour": df.index.hour,
-        "weekday": df.index.weekday  # 0 = Monday ... 6 = Sunday
-    })
-
-    # Map weekday number to English name and forzar orden
-    weekday_names = list(calendar.day_name)  # ['Monday', 'Tuesday', ...]
-    df2["weekday_name"] = df2["weekday"].map(lambda d: weekday_names[d])
-    df2["weekday_name"] = pd.Categorical(
-        df2["weekday_name"],
-        categories=weekday_names,
-        ordered=True
-    )
-
-    heat = df2.groupby(["weekday_name", "hour"]).size().reset_index(name="count")
-
-    fig = px.density_heatmap(
-        heat,
-        x="weekday_name",      # muestra días en inglés
-        y="hour",
-        z="count",
-        color_continuous_scale="Blues",
-        category_orders={"weekday_name": weekday_names}
-    )
-    fig.update_layout(**theme_cfg)
-    return ("Activity heatmap (weekday × hour)", fig)
-
-
-# ============================================================
-# 3. CALENDARIO SEMANAL (tipo GitHub)
-# ============================================================
-
-def fig_datetime_calendar(s, theme_cfg):
-    df = _to_dt_index(s)
-    if df.empty:
-        return None
-
-    df2 = pd.DataFrame({"date": df.index.date})
-    df2 = df2.groupby("date").size().reset_index(name="count")
-
-    # weekday: 0 = Monday ... 6 = Sunday
-    df2["dow"] = pd.to_datetime(df2["date"]).dt.weekday
-    # Map to English names and forzar orden
-    weekday_names = list(calendar.day_name)  # ['Monday', 'Tuesday', ...]
-    df2["dow_name"] = df2["dow"].map(lambda d: weekday_names[d])
-    df2["dow_name"] = pd.Categorical(df2["dow_name"], categories=weekday_names, ordered=True)
-
-    # week: usar isocalendar().week (puede repetirse entre años)
-    df2["week"] = pd.to_datetime(df2["date"]).dt.isocalendar().week
-
-    fig = px.density_heatmap(
-        df2,
-        x="week",
-        y="dow_name",
-        z="count",
-        color_continuous_scale="Blues",
-        labels={"dow_name": "Day of week", "week": "Week"},
-        category_orders={"dow_name": weekday_names}
-    )
-    fig.update_layout(**theme_cfg)
-    return ("Calendar heatmap", fig)
-
-
-# ============================================================
-# FUNCIÓN PRINCIPAL PARA PROFILES
-# ============================================================
-
-def profile_datetime_figs(df, col, theme_cfg):
-    series = df[col].dropna()
-    if series.empty:
-        return []
-
     figs = []
 
-    f1 = fig_datetime_histogram(series, theme_cfg)
-    if f1: figs.append(f1)
+    def add(title, fig):
+        if fig is not None:
+            figs.append((title, fig))
 
-    f2 = fig_datetime_heatmap(series, theme_cfg)
-    if f2: figs.append(f2)
+    add("Bar chart", plot_bars(df, col, theme_cfg))
 
-    f3 = fig_datetime_calendar(series, theme_cfg)
-    if f3: figs.append(f3)
+    return figs
+
+def profile_datetime_figs(df, col, theme_cfg):
+    figs = []
+
+    def add(title, fig):
+        if fig is not None:
+            figs.append((title, fig))
+
+    add("Distribution over time", plot_datetime_histogram(df, col, theme_cfg))
+    if np.issubdtype(df[col].dtype, np.datetime64):
+        ser = df[col].dropna()
+        if ser.dt.hour.nunique() > 1 or ser.dt.minute.nunique() > 1:
+            add("Hour distribution", plot_hour_distribution(df, col, theme_cfg))
+    add("Weekday distribution", plot_weekday_distribution(df, col, theme_cfg))
+    add("Activity heatmap (weekday × hour)", plot_datetime_heatmap(df, col, theme_cfg))
+    add("Month × day heatmap", plot_month_day_heatmap(df, col, theme_cfg))
+    #add("Weekday x week distribution", plot_datetime_calendar(df, col, theme_cfg))
+    #add("Autocorrelation (ACF)", plot_acf(df, col, theme_cfg))
+    #add("Lag plot", plot_lag(df, col, theme_cfg))
 
     return figs
 
@@ -276,6 +199,144 @@ def variable_profiles(df, theme="light"):
     </div>
     """
 
+    tooltip_viz_map = {
+        "Histogram": (
+            "A histogram shows the distribution of a numerical variable by grouping values "
+            "into bins and counting how many observations fall into each bin. It helps reveal "
+            "the shape of the distribution, detect skewness, identify outliers, and understand "
+            "where values are concentrated."
+        ),
+
+        "Boxplot": (
+            "A boxplot summarizes a numeric variable using the minimum, first quartile, median, "
+            "third quartile, and maximum. It highlights the central tendency, spread, and potential "
+            "outliers, making it ideal for detecting skewness and comparing distributions."
+        ),
+
+        "Bar chart": (
+            "A bar chart displays the frequency of each category in a categorical variable. "
+            "It helps identify the most common categories, rare categories, and imbalances in the "
+            "distribution, as well as potential data quality issues such as inconsistent labels."
+        ),
+
+        "Violin": (
+            "A violin plot combines a boxplot with a kernel density estimate, showing both the "
+            "summary statistics and the full shape of the distribution. It is useful for detecting "
+            "multimodality, density concentration, and complex distribution patterns."
+        ),
+
+        "Heatmap": (
+            "A heatmap visualizes the frequency of combinations of two categorical variables. "
+            "It highlights interactions, co-occurrence patterns, dominant category pairs, and "
+            "sparse or empty combinations."
+        ),
+
+        "CDF": (
+            "A Cumulative Distribution Function (CDF) plot shows the cumulative probability of a "
+            "numeric variable. For any value x, the CDF indicates the proportion of observations "
+            "less than or equal to x. It is useful for understanding percentiles, thresholds, and "
+            "how quickly the distribution accumulates."
+        ),
+
+        "QQ-plot": (
+            "A QQ-plot compares the quantiles of the data to the quantiles of a theoretical normal "
+            "distribution. If the points follow a straight line, the data is approximately normal. "
+            "Deviations indicate skewness, heavy tails, or outliers."
+        ),
+
+        "Donut chart": (
+            "A donut chart displays the proportion of each category as segments of a circular ring. "
+            "It is useful for visualizing simple categorical distributions, especially binary or "
+            "low-cardinality variables."
+        ),
+
+        "Pareto chart": (
+            "A Pareto chart combines a bar chart with a cumulative percentage line. It highlights "
+            "the most influential categories and follows the 80/20 principle, showing how a small "
+            "number of categories often account for most of the total frequency."
+        ),
+
+        "KDE": (
+            "A Kernel Density Estimate (KDE) plot is a smoothed version of a histogram that estimates "
+            "the probability density function of a numeric variable. It helps identify peaks, "
+            "multimodality, and the overall shape of the distribution without binning artifacts."
+        ),
+
+        "Treemap": (
+            "A treemap represents categories as nested rectangles sized according to their frequency. "
+            "It is ideal for visualizing many categories at once and identifying dominant or rare "
+            "categories in a compact layout."
+        ),
+
+        "Scatter plot": (
+            "A scatter plot visualizes the relationship between two or three numeric variables. "
+            "It reveals correlation, clusters, nonlinear patterns, heteroscedasticity, and outliers. "
+            "If a third variable is included, it is encoded using color."
+        ),
+
+        "Scatter vs index": (
+            "This plot shows the values of a numeric variable against their row index. It is useful "
+            "for detecting trends, drifts, sudden jumps, periodic patterns, or anomalies in ordered "
+            "data, even when the column is not a timestamp."
+        ),
+
+        "Activity heatmap (weekday × hour)": (
+            "A weekday × hour heatmap shows event counts across days of the week and hours of the day. "
+            "It reveals daily and weekly activity patterns, peak usage windows, and unusual time blocks."
+        ),
+
+        "Distribution over time": (
+            "A datetime histogram groups timestamps into time buckets (daily, weekly, monthly, or yearly) "
+            "and counts events in each bucket. It helps identify periods of high or low activity, "
+            "long-term changes, and temporal density patterns."
+        ),
+
+        "Weekday x week distribution": (
+            "A weekday x week distribution displays event counts per day in a GitHub-style weekly layout. "
+            "It reveals long-term temporal patterns, seasonal cycles, daily variations, and anomalies "
+            "across weeks and months."
+        ),
+
+        "Autocorrelation (ACF)": (
+            "An autocorrelation plot (ACF) shows how a time series correlates with itself at different "
+            "lags. It helps detect periodicity, seasonality, memory effects, and whether the process "
+            "is random or structured."
+        ),
+
+        "Lag plot": (
+            "A lag plot visualizes the relationship between a time series value at time t and its value "
+            "at time t + lag. It is useful for detecting serial correlation, nonlinear relationships, "
+            "and randomness. A linear pattern indicates strong autocorrelation."
+        ),
+
+        "plot_timeseries": (
+            "A time series plot shows how event counts evolve over time, aggregated at an appropriate "
+            "frequency (daily, weekly, monthly, or yearly). It reveals trends, seasonality, bursts of "
+            "activity, and anomalies."
+        ),
+
+        "Inter-arrival histogram": (
+            "An inter-arrival histogram shows the distribution of time differences between consecutive "
+            "events. It is ideal for analyzing event frequency, detecting bursts or pauses, and "
+            "understanding system load or arrival processes."
+        ),
+
+        "Hour distribution": (
+            "This plot shows how events are distributed across the 24 hours of the day. It helps identify "
+            "peak hours, night-time or daytime patterns, and human or system activity cycles."
+        ),
+
+        "Month × day heatmap": (
+            "A month × day heatmap shows event counts for each day of each month. It reveals annual "
+            "seasonality, monthly patterns, special days, and differences between months."
+        ),
+
+        "Weekday distribution": (
+            "This plot shows how events are distributed across the days of the week. It highlights "
+            "weekday vs weekend patterns, operational cycles, and weekly seasonality."
+        ),
+    }
+
     def render_var_card(col, vtype):
         stats = var_summary_stats(df, col, vtype)
 
@@ -328,14 +389,38 @@ def variable_profiles(df, theme="light"):
 
         if figs:
             fig_blocks = ""
+
             for title, fig in figs:
                 extra_class = "calendar" if "Calendar" in title else ""
+
+                help_text = tooltip_viz_map.get(title, "")
+                if help_text:
+                    help_icon = f"""
+                    <span class='vp-fig-help'>
+                        ℹ️
+                        <span class='vp-fig-help-text'>{help_text}</span>
+                    </span>
+                    """
+                else:
+                    help_icon = ""
+
+                fig_html = fig.to_html(
+                    full_html=False,
+                    include_plotlyjs=False,
+                    config={"responsive": True}
+                )
+
                 fig_blocks += f"""
                     <div class="vp-fig {extra_class}">
-                        <div class="vp-fig-title">{title}</div>
-                        {fig.to_html(full_html=False, include_plotlyjs="cdn")}
+                        <div class="vp-fig-title">
+                            {title} {help_icon}
+                        </div>
+                        <div class="vp-fig-plot">
+                            {fig_html}
+                        </div>    
                     </div>
                 """
+
             figs_html = f"<div class='vp-fig-row'>{fig_blocks}</div>"
         else:
             figs_html = "<div class='vp-no-fig'>No suitable visualization available.</div>"
@@ -412,10 +497,16 @@ def variable_profiles(df, theme="light"):
         }
     });
 
+
     backToTop.addEventListener("click", () => {
-        document.getElementById("prof").scrollIntoView({ behavior: "smooth", block: "start" });
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     });
+
     </script>
+
     """
 
     return f"""

@@ -34,7 +34,7 @@
     margin-top: 24px;
 }
 
-/* Tablas (reutilizamos tu estilo base, pero ajustamos algo) */
+/* Tablas */
 #desc .table-custom {
     border-collapse: collapse;
     table-layout: auto;

@@ -14,18 +14,18 @@
    SIDEBAR
    ============================ */
 
+/* --- Sidebar general --- */
 .vp-sidebar {
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    padding: 12px 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-    max-height: calc(100vh - 140px);
+    width: 260px;
+    background: var(--card-bg, #f8f8f8);
+    border-right: 1px solid rgba(0,0,0,0.1);
+    padding: 8px;
     overflow-y: auto;
     position: sticky;
-    top: 80px;
-    margin-top: 55px;
+    top: 120px;
+    height: 100vh;
 }
-
+/* --- Título --- */
 .vp-sidebar-title {
     margin: 0 0 8px 0;
     font-size: 1.2rem;
@@ -34,10 +34,12 @@
     letter-spacing: 0.05em;
 }
 
+/* --- Sección de tipo de variable --- */
 .vp-side-section {
     margin-bottom: 10px;
 }
 
+/* --- Botón de tipo de variable --- */
 .vp-type-link {
     width: 100%;
     text-align: left;
@@ -56,11 +58,24 @@
     color: var(--accent-color);
 }
 
+/* --- Flecha de despliegue --- */
+.vp-type-link::after {
+    content: "▸";
+    transition: transform 0.2s;
+}
+
+.vp-side-section.active .vp-type-link::after {
+    transform: rotate(90deg);
+}
+
+
 .vp-count {
     font-size: 0.85rem;
     color: var(--muted-text-color);
+    align: right;
 }
 
+/* --- Lista de variables --- */
 .vp-var-list {
     list-style: none;
     margin: 4px 0 8px 0;
@@ -70,6 +85,7 @@
 
 .vp-side-section.active .vp-var-list {
     display: block;
+    max-height: 500px;
 }
 
 .vp-var-link {
@@ -166,14 +182,14 @@
    ============================ */
 
 .vp-fig-row {
+    max-width: 100%;
     display: flex;
     flex-wrap: nowrap;
-    gap: 12px;
+    gap: 50px;
     overflow-x: auto;
 }
 
 .vp-fig {
-    flex: 0 0 auto;
     min-width: 260px;
 }
 
@@ -182,14 +198,74 @@
 }
 
 .vp-fig-title {
-    font-size: 0.85rem;
-    margin-bottom: 4px;
+    font-size: 1rem;
+    margin-bottom: 2px;
+    margin-top: 4px;
+    gap: 6px;
     color: var(--muted-text-color);
 }
 
 .vp-no-fig {
     font-size: 0.85rem;
     color: var(--muted-text-color);
+}
+
+/* ============================
+   TOOLTIP PARA GRÁFICOS
+   ============================ */
+
+.vp-fig-help {
+    position: absolute;
+    display: inline-block;
+    margin-left: 6px;
+    cursor: help;
+    font-size: 0.85rem;
+    color: var(--accent-color);
+}
+
+/* Burbuja */
+.vp-fig-help-text {
+    visibility: hidden;
+    opacity: 0;
+    width: 240px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px 10px;
+
+    /* SIN borde */
+    border: none;
+
+    /* Sombra suave */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+
+    position: absolute;
+    z-index: 100;
+    bottom: auto;
+    left: 0;
+    transition: opacity 0.25s ease-in-out;
+    font-size: 0.85rem;
+    top: calc(100% + 6px);
+}
+
+/* Flecha */
+.vp-fig-help-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 12px;
+    border-width: 6px;
+    border-style: solid;
+
+    /* SIN borde → solo sombra */
+    border-color: var(--card-bg) transparent transparent transparent;
+}
+
+/* Mostrar tooltip */
+.vp-fig-help:hover .vp-fig-help-text {
+    visibility: visible;
+    opacity: 1;
 }
 
 /* ============================

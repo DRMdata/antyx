@@ -45,7 +45,6 @@
 
 .ov-kpi-title {
     font-size: 0.9rem;
-    opacity: 0.7;
 }
 
 .ov-kpi-value {
@@ -83,6 +82,7 @@
 
 .ov-table-block {
     margin-bottom: 20px;
+    overflow-x: auto;
 }
 
 /* QUALITY */

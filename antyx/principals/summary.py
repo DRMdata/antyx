@@ -194,7 +194,6 @@ def build_summary_dataframes(df: pd.DataFrame):
         is_high_card = unique > 50
 
         base_info = {
-            "Variable": col,
             "Type": vtype,
             "Non-null": non_null,
             "Nulls": nulls,
@@ -212,9 +211,11 @@ def build_summary_dataframes(df: pd.DataFrame):
             outliers_pct = stats.get("outliers_pct", 0) or 0
             quality = _quality_flag(null_pct, is_high_card, outliers_pct)
 
-            general_rows.append({**base_info, "Quality": quality})
+            general_rows.append({**base_info, "Quality": quality, "Variable": col})
 
             numeric_rows.append({
+                "Variable": col,
+                "Quality": quality,
                 **base_info,
                 "Mean": stats.get("mean"),
                 "Median": stats.get("median"),
@@ -231,7 +232,6 @@ def build_summary_dataframes(df: pd.DataFrame):
                 "Kurtosis": stats.get("kurt"),
                 "Outliers": stats.get("outliers"),
                 "% Outliers": round(outliers_pct, 2),
-                "Quality": quality,
             })
 
         # BINARY
@@ -239,15 +239,16 @@ def build_summary_dataframes(df: pd.DataFrame):
             stats = _binary_stats(s)
             quality = _quality_flag(null_pct, is_high_card, 0)
 
-            general_rows.append({**base_info, "Quality": quality})
+            general_rows.append({**base_info, "Quality": quality, "Variable": col})
 
             binary_rows.append({
+                "Variable": col,
+                "Quality": quality,
                 **base_info,
                 "Top": stats.get("top"),
                 "Freq Top": stats.get("top_freq"),
                 "% Top": round(stats.get("top_pct", 0), 2),
                 "Balance": round(stats.get("balance", 0), 2),
-                "Quality": quality,
             })
 
         # CATEGORICAL
@@ -255,9 +256,11 @@ def build_summary_dataframes(df: pd.DataFrame):
             stats = _categorical_stats(s)
             quality = _quality_flag(null_pct, is_high_card, 0)
 
-            general_rows.append({**base_info, "Quality": quality})
+            general_rows.append({**base_info, "Quality": quality, "Variable": col})
 
             categorical_rows.append({
+                "Variable": col,
+                "Quality": quality,
                 **base_info,
                 "Top": stats.get("top"),
                 "Freq Top": stats.get("top_freq"),
@@ -267,7 +270,6 @@ def build_summary_dataframes(df: pd.DataFrame):
                 "Max length": stats.get("max_len"),
                 "Numeric-like": "Yes" if stats.get("numeric_like") else "No",
                 "Datetime-like": "Yes" if stats.get("datetime_like") else "No",
-                "Quality": quality,
             })
 
         # DATETIME
@@ -275,16 +277,16 @@ def build_summary_dataframes(df: pd.DataFrame):
             stats = _datetime_stats(s)
             quality = _quality_flag(null_pct, is_high_card, 0)
 
-            general_rows.append({**base_info, "Quality": quality})
+            general_rows.append({**base_info, "Quality": quality, "Variable": col})
 
             datetime_rows.append({
-                **base_info,
+                "Variable": col,
+                "Quality": quality,**base_info,
                 "Min": stats.get("min"),
                 "Max": stats.get("max"),
                 "Range days": stats.get("range_days"),
                 "Has time": "Yes" if stats.get("has_time") else "No",
                 "Future dates": stats.get("future_dates"),
-                "Quality": quality,
             })
 
         # OTHER
@@ -314,7 +316,7 @@ def render_summary_block(title, headers, rows_html, block_class=""):
         "Constant": "Column has only one unique value",
         "Quasi-constant": "Column has very low variability",
         "High cardinality": "Column has more than 50 unique values",
-        "Quality": "Heuristic quality score based on nulls, cardinality and outliers",
+        "Quality": "Heuristic quality score based on nulls, cardinality, and outliers for numerics",
         "% Outliers": "Percentage of values outside the IQR rule",
         "Rare categories": "Categories representing less than 1% of the data",
         "Numeric-like": "Text values that look numeric",
@@ -327,7 +329,7 @@ def render_summary_block(title, headers, rows_html, block_class=""):
         if h in tooltip_map:
             tip = html.escape(tooltip_map[h])
             return (
-                f'{safe_h}<span class="sum-tip">ⓘ'
+                f'{safe_h}<span class="sum-tip">ℹ️'
                 f'<span class="sum-tip-text">{tip}</span>'
                 f'</span>'
             )

@@ -55,7 +55,6 @@ def overview(
             <div class="ov-file-info">
                 <h2 class="ov-file-name">{effective_file_name}</h2>
                 <div class="ov-meta">
-                    <span class="ov-meta-item">Size: {memory_str}</span>
                     <span class="ov-meta-item">Rows: {rows}</span>
                     <span class="ov-meta-item">Columns: {cols}</span>
                 </div>
@@ -69,7 +68,7 @@ def overview(
                 <div class="ov-kpi-title">
                     Missing ratio
                     <span class="ov-tip">
-                        ⓘ
+                        ℹ️
                         <span class="ov-tip-text">
                             Percentage of missing cells over the total number of cells in the dataset.
                         </span>
@@ -82,7 +81,7 @@ def overview(
                 <div class="ov-kpi-title">
                     Duplicates
                     <span class="ov-tip">
-                        ⓘ
+                        ℹ️
                         <span class="ov-tip-text">
                             Percentage of duplicated rows in the dataset.
                         </span>
@@ -95,7 +94,7 @@ def overview(
                 <div class="ov-kpi-title">
                     High cardinality
                     <span class="ov-tip">
-                        ⓘ
+                        ℹ️
                         <span class="ov-tip-text">
                             Number of categorical variables with more than 50 unique values.
                         </span>
@@ -108,7 +107,7 @@ def overview(
                 <div class="ov-kpi-title">
                     Memory footprint
                     <span class="ov-tip">
-                        ⓘ
+                        ℹ️
                         <span class="ov-tip-text">
                             Estimated memory usage of the dataset in RAM.
                         </span>
@@ -121,7 +120,7 @@ def overview(
                 <div class="ov-kpi-title">
                     Leakage risk
                     <span class="ov-tip">
-                        ⓘ
+                        ℹ️
                         <span class="ov-tip-text">
                             Heuristic check for columns that may contain target-like information.
                         </span>
@@ -134,7 +133,7 @@ def overview(
                 <div class="ov-kpi-title">
                     Feature complexity
                     <span class="ov-tip">
-                        ⓘ
+                        ℹ️
                         <span class="ov-tip-text">
                             Estimated complexity of feature engineering.
                         </span>
@@ -143,6 +142,15 @@ def overview(
                 <div class="ov-kpi-value">{fe_complexity}</div>
             </div>
 
+        </section>
+                
+        <!-- QUALITY -->
+        <section class="ov-quality">
+            <h3>Data quality</h3>
+            <div class="ov-quality-indicator {quality_class}"></div>
+            <p class="ov-quality-note">
+                Quick quality assessment based on missing values, duplicates and cardinality.
+            </p>
         </section>
 
         <!-- DATA PREVIEW -->
@@ -160,12 +168,4 @@ def overview(
             </div>
         </section>
 
-        <!-- QUALITY -->
-        <section class="ov-quality">
-            <h3>Data quality</h3>
-            <div class="ov-quality-indicator {quality_class}"></div>
-            <p class="ov-quality-note">
-                Quick quality assessment based on missing values, duplicates and cardinality.
-            </p>
-        </section>
     """
