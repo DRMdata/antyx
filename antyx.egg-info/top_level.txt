@@ -1,6 +1,8 @@
+BORRAR
 antyx
-build
 data
 dist
 docs
+figs
 site
+tmp_whl

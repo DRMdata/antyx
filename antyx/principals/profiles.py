@@ -1,5 +1,8 @@
 import numpy as np
+
 from antyx.utils.types import detect_var_type
+from antyx.utils.utils import save_fig_json
+
 from antyx.principals.visualizations import (
     plot_hist,
     plot_box,
@@ -27,6 +30,7 @@ from antyx.principals.visualizations import (
     PLOTLY_LIGHT,
     PLOTLY_DARK,
 )
+
 
 # ============================
 # FIGURAS
@@ -337,6 +341,7 @@ def variable_profiles(df, theme="light"):
         ),
     }
 
+
     def render_var_card(col, vtype):
         stats = var_summary_stats(df, col, vtype)
 
@@ -364,7 +369,8 @@ def variable_profiles(df, theme="light"):
                 <ul class="vp-top-values">{top_vals}</ul>
             </div>
             """
-            figs = profile_binary_figs(df, col, theme_cfg) if vtype == "binary" else profile_categorical_figs(df, col, theme_cfg)
+            figs = profile_binary_figs(df, col, theme_cfg) if vtype == "binary" else profile_categorical_figs(df, col,
+                                                                                                              theme_cfg)
 
         elif vtype == "datetime":
             summary_html = f"""
@@ -387,6 +393,7 @@ def variable_profiles(df, theme="light"):
             """
             figs = []
 
+        # FIGURAS
         if figs:
             fig_blocks = ""
 
@@ -394,30 +401,25 @@ def variable_profiles(df, theme="light"):
                 extra_class = "calendar" if "Calendar" in title else ""
 
                 help_text = tooltip_viz_map.get(title, "")
-                if help_text:
-                    help_icon = f"""
+                help_icon = f"""
                     <span class='vp-fig-help'>
                         ℹ️
                         <span class='vp-fig-help-text'>{help_text}</span>
                     </span>
-                    """
-                else:
-                    help_icon = ""
+                """ if help_text else ""
 
-                fig_html = fig.to_html(
-                    full_html=False,
-                    include_plotlyjs=False,
-                    config={"responsive": True}
-                )
+                # NUEVO: externalizar datos
+                div_id = f"fig-{col}-{title.replace(' ', '_')}"
+                json_path = f"figs/{col}/{title.replace(' ', '_')}.json"
+
+                save_fig_json(fig, json_path)
 
                 fig_blocks += f"""
-                    <div class="vp-fig {extra_class}">
+                    <div id="{div_id}" class="vp-fig {extra_class}" data-json="{json_path}">
                         <div class="vp-fig-title">
                             {title} {help_icon}
                         </div>
-                        <div class="vp-fig-plot">
-                            {fig_html}
-                        </div>    
+                        <div class="vp-fig-plot"></div>
                     </div>
                 """
 
@@ -435,7 +437,6 @@ def variable_profiles(df, theme="light"):
             {figs_html}
         </div>
         """
-
     def render_section(title, vtype_key):
         vars_ = var_types[vtype_key]
         if not vars_:
@@ -516,4 +517,34 @@ def variable_profiles(df, theme="light"):
     </div>
     {back_to_top_button}
     {script}
+
+    <!-- LAZY LOADING DE PLOTLY -->
+    <script>
+    function loadPlotlyFigure(div) {{
+        const url = div.dataset.json;
+        if (!url || div.dataset.loaded === "1") return;
+
+        fetch(url)
+            .then(r => r.json())
+            .then(obj => {{
+                Plotly.newPlot(div.id, obj.data, obj.layout);
+                div.dataset.loaded = "1";
+            }});
+    }}
+
+    function lazyLoadPlots() {{
+        const figs = document.querySelectorAll(".vp-fig");
+        const observer = new IntersectionObserver(entries => {{
+            entries.forEach(entry => {{
+                if (entry.isIntersecting) {{
+                    loadPlotlyFigure(entry.target);
+                }}
+            }});
+        }}, {{ rootMargin: "200px" }});
+
+        figs.forEach(fig => observer.observe(fig));
+    }}
+
+    document.addEventListener("DOMContentLoaded", lazyLoadPlots);
+    </script>
     """

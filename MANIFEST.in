@@ -1,10 +1,7 @@
 recursive-include antyx/styles *.css
+recursive-include antyx/static *.js *.css
 recursive-include antyx/templates *.html
-recursive-include antyx/icons *.png
-recursive-include antyx/icons *.svg
-recursive-include antyx/js *.js
-recursive-include antyx *.json
-recursive-include antyx *.txt
+recursive-include antyx/icons *.png *.svg
 
 prune utilidades_gestion
 prune tests

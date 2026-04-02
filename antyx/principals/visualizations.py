@@ -6,6 +6,7 @@ from statsmodels.tsa.stattools import acf
 import scipy.stats as stats
 import plotly.graph_objects as go
 
+from antyx.utils.utils import save_fig_json
 
 PLOTLY_LIGHT = dict(
     paper_bgcolor="white",
@@ -19,15 +20,31 @@ PLOTLY_DARK = dict(
     font=dict(color="#e0e0e0")
 )
 
-def plot_hist(df, col, theme_cfg):
-    fig = px.histogram(df, x=col)
+# ==========================
+# GENERACIÓN DE LOS GRÁFICOS
+# ==========================
 
-    showlegend = len(fig.data) > 1
+def _base_layout(theme_cfg, width=500, height=350, showlegend=False):
+    return dict(
+        width=width,
+        height=height,
+        **theme_cfg,
+        showlegend=showlegend,
+        legend=dict(
+            orientation="h",
+            x=0,
+            y=1.1,
+            xanchor="left",
+            yanchor="bottom"
+        ),
+        margin=dict(t=20, b=10, l=10, r=10)
+    )
 
-    fig.update_layout(
-        width=500,
-
-        height=350,
+'''
+def _base_layout(theme_cfg, width=500, height=350, showlegend=False):
+    return dict(
+        width=width,
+        height=height,
         xaxis=dict(showgrid=False),
         yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
         **theme_cfg,
@@ -41,17 +58,23 @@ def plot_hist(df, col, theme_cfg):
         ),
         margin=dict(t=20, b=10, l=10, r=10)
     )
+'''
 
-    fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",  # similar a var(--card-bg) claro
-            bordercolor="rgba(0,0,0,0.15)",  # similar a tu sombra/borde suave
-            font=dict(
-                size=15,
-                color="black"
-            )
-        )
+def _default_hoverlabel():
+    return dict(
+        bgcolor="white",
+        bordercolor="rgba(0,0,0,0.15)",
+        font=dict(size=15, color="black")
     )
+
+
+def plot_hist(df, col, theme_cfg):
+    fig = px.histogram(df, x=col)
+
+    showlegend = len(fig.data) > 1
+
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
     return fig
 
@@ -61,33 +84,8 @@ def plot_kde(df, col, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
-
-    fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",  # similar a var(--card-bg) claro
-            bordercolor="rgba(0,0,0,0.15)",  # similar a tu sombra/borde suave
-            font=dict(
-                size=15,  # aprox 0.85rem
-                color="black"  # similar a var(--text-color) oscuro
-            )
-        )
-    )
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
     return fig
 
@@ -97,32 +95,10 @@ def plot_box(df, col, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
-
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
     fig.update_traces(
         hovertemplate="<b>%{y}</b><extra></extra>",
-        hoverlabel=dict(
-            bgcolor="white",  # similar a var(--card-bg) claro
-            bordercolor="rgba(0,0,0,0.15)",  # similar a tu sombra/borde suave
-            font=dict(size=15, color="black"),
-            align="left",
-            namelength=0,
-        )
+        hoverlabel=_default_hoverlabel()
     )
 
     return fig
@@ -133,33 +109,8 @@ def plot_violin(df, col, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
-
-    fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",  # similar a var(--card-bg) claro
-            bordercolor="rgba(0,0,0,0.15)",  # similar a tu sombra/borde suave
-            font=dict(
-                size=15,  # aprox 0.85rem
-                color="black"  # similar a var(--text-color) oscuro
-            )
-        )
-    )
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
     return fig
 
@@ -174,41 +125,18 @@ def plot_scatter(df, cols, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
-
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
     fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",  # similar a var(--card-bg) claro
-            bordercolor="rgba(0,0,0,0.15)",  # similar a tu sombra/borde suave
-            font=dict(
-                size=15,  # aprox 0.85rem
-                color="black"  # similar a var(--text-color) oscuro
-            )
-        )
+        hoverlabel=_default_hoverlabel(),
     )
+    if len(df) > 20000:
+        fig.update_traces(type="scattergl")
 
     return fig
 
 
 def plot_bars(df, col, theme_cfg):
-    # Robust handling: ensure strings, strip whitespace, sort by frequency
-    s = df[col].astype(str).fillna("NaN")
-    s = s.str.strip()
+    s = df[col].astype(str).fillna("NaN").str.strip()
     counts = s.value_counts(dropna=True)
     data = counts.reset_index()
     data.columns = ["category", "count"]
@@ -218,33 +146,10 @@ def plot_bars(df, col, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
-
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
     fig.update_traces(
         textposition="inside",
-        hoverlabel=dict(
-            bgcolor="white",  # similar a var(--card-bg) claro
-            bordercolor="rgba(0,0,0,0.15)",  # similar a tu sombra/borde suave
-            font=dict(
-                size=15,  # aprox 0.85rem
-                color="black"  # similar a var(--text-color) oscuro
-            )
-        )
+        hoverlabel=_default_hoverlabel()
     )
 
     return fig
@@ -258,58 +163,35 @@ def plot_heatmap(df, cols, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
-
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
     fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",  # similar a var(--card-bg) claro
-            bordercolor="rgba(0,0,0,0.15)",  # similar a tu sombra/borde suave
-            font=dict(
-                size=15,  # aprox 0.85rem
-                color="black"  # similar a var(--text-color) oscuro
-            )
-        )
+        hoverlabel=_default_hoverlabel()
+        # si quieres, aquí podrías usar heatmapgl, pero yo lo dejaría SVG
+        # type="heatmapgl"
     )
 
     return fig
+
 
 def plot_qq(df, col, theme_cfg):
     s = df[col].dropna()
     if s.empty:
         return None
 
-    # Obtener cuantiles teóricos y muestrales
     osm, osr = stats.probplot(s, dist="norm", fit=False)
 
     fig = go.Figure()
+
+    showlegend = len(fig.data) > 1
+
     fig.add_trace(go.Scatter(
         x=osm,
         y=osr,
         mode="markers",
         marker=dict(color="rgba(50, 100, 200, 0.7)", size=6),
-        hoverlabel=dict(
-            bgcolor="white",
-            bordercolor="rgba(0,0,0,0.15)",
-            font=dict(size=15, color="black")
-        )
+        hoverlabel=_default_hoverlabel()
     ))
 
-    # Línea de referencia
     fig.add_trace(go.Scatter(
         x=osm,
         y=osm,
@@ -318,37 +200,21 @@ def plot_qq(df, col, theme_cfg):
         showlegend=False
     ))
 
-    showlegend = len(fig.data) > 1
-
     fig.update_layout(
         xaxis_title="Theoretical quantiles",
         yaxis_title="Sample quantiles",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
 
     return fig
 
-# CDF (distribución acumulada)
+
 def plot_cdf(df, col, theme_cfg):
     s = df[col].dropna().sort_values()
     if s.empty:
         return None
 
     y = np.linspace(0, 1, len(s))
-
     fig = px.line(x=s, y=y)
 
     showlegend = len(fig.data) > 1
@@ -356,28 +222,10 @@ def plot_cdf(df, col, theme_cfg):
     fig.update_layout(
         xaxis_title=col,
         yaxis_title="Cumulative probability",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
-
     fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",
-            bordercolor="rgba(0,0,0,0.15)",
-            font=dict(size=15, color="black")
-        )
+        hoverlabel=_default_hoverlabel()
     )
 
     return fig
@@ -395,31 +243,16 @@ def plot_scatter_index(df, col, theme_cfg):
     fig.update_layout(
         xaxis_title="Index",
         yaxis_title=col,
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
-
     fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",
-            bordercolor="rgba(0,0,0,0.15)",
-            font=dict(size=15, color="black")
-        )
+        hoverlabel=_default_hoverlabel(),
     )
+    if len(df) > 20000:
+        fig.update_traces(type="scattergl")
 
     return fig
+
 
 def plot_treemap(df, col, theme_cfg):
     s = df[col].astype(str).fillna("NaN").str.strip()
@@ -430,32 +263,11 @@ def plot_treemap(df, col, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
-
-    fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",
-            bordercolor="rgba(0,0,0,0.15)",
-            font=dict(size=15, color="black")
-        )
-    )
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
     return fig
+
 
 def plot_pareto(df, col, theme_cfg):
     s = df[col].astype(str).fillna("NaN").str.strip()
@@ -471,11 +283,7 @@ def plot_pareto(df, col, theme_cfg):
         y=counts["count"],
         name="Count",
         marker_color="rgba(50, 100, 200, 0.7)",
-        hoverlabel=dict(
-            bgcolor="white",
-            bordercolor="rgba(0,0,0,0.15)",
-            font=dict(size=15, color="black")
-        )
+        hoverlabel=_default_hoverlabel()
     ))
 
     # Línea acumulada
@@ -486,35 +294,33 @@ def plot_pareto(df, col, theme_cfg):
         yaxis="y2",
         mode="lines+markers",
         line=dict(color="black"),
-        hoverlabel=dict(
-            bgcolor="white",
-            bordercolor="rgba(0,0,0,0.15)",
-            font=dict(size=15, color="black")
-        )
+        hoverlabel=_default_hoverlabel()
     ))
 
-    showlegend = len(fig.data) > 1
-
+    # Layout base
     fig.update_layout(
-        yaxis=dict(title="Count", showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        yaxis2=dict(title="Cumulative %", overlaying="y", range=[0, 1], side="right", showgrid=True, gridcolor="rgba(0,0,0,0)", gridwidth=1),
-        xaxis=dict(showgrid=False),
-        width=450,
-        height=300,
-        **theme_cfg,
-        showlegend=showlegend,
-        legend = dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
+        yaxis=dict(
+            title="Count",
+            showgrid=True,
+            gridcolor="rgba(0,0,0,0.15)",
+            gridwidth=1
         ),
-        margin=dict(t=20, b=10, l=10, r=10)
-
+        yaxis2=dict(
+            title="Cumulative %",
+            overlaying="y",
+            range=[0, 1],
+            side="right",
+            showgrid=False
+        ),
+        xaxis=dict(showgrid=False),
+        **_base_layout(theme_cfg, width=450, height=300, showlegend=True)
     )
 
+    fig.update_xaxes(title="Category")
+    fig.update_yaxes(title="Count")
+
     return fig
+
 
 def plot_donut(df, col, theme_cfg):
     s = df[col].astype(str).fillna("NaN").str.strip()
@@ -525,39 +331,13 @@ def plot_donut(df, col, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
-
-    fig.update_traces(
-        hoverlabel=dict(
-            bgcolor="white",
-            bordercolor="rgba(0,0,0,0.15)",
-            font=dict(size=15, color="black")
-        )
-    )
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
     return fig
 
+
 def _dt_index(s):
-    '''
-    Convierte s a datetime index
-    :param s: Variable de una dataset
-    :return: df
-    '''
     s = pd.to_datetime(s.dropna(), errors="coerce")
     s = s.dropna()
     if s.empty:
@@ -565,6 +345,7 @@ def _dt_index(s):
     df = s.to_frame(name="dt")
     df.index = df["dt"]
     return df
+
 
 def plot_timeseries(df, col, theme_cfg):
     base = _dt_index(df[col])
@@ -590,28 +371,12 @@ def plot_timeseries(df, col, theme_cfg):
     fig.update_layout(
         xaxis_title="Date",
         yaxis_title="Count",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
+
 
 def plot_datetime_histogram(df, col, theme_cfg):
     base = _dt_index(df[col])
@@ -637,28 +402,12 @@ def plot_datetime_histogram(df, col, theme_cfg):
     fig.update_layout(
         xaxis_title="Date",
         yaxis_title="Count",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-        )
+        **_base_layout(theme_cfg, showlegend=showlegend)
+    )
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
+
 
 def plot_hour_distribution(df, col, theme_cfg):
     base = _dt_index(df[col])
@@ -676,28 +425,12 @@ def plot_hour_distribution(df, col, theme_cfg):
     fig.update_layout(
         xaxis_title="Hour",
         yaxis_title="Count",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
+
 
 def plot_weekday_distribution(df, col, theme_cfg):
     base = _dt_index(df[col])
@@ -710,36 +443,24 @@ def plot_weekday_distribution(df, col, theme_cfg):
     data.columns = ["weekday", "count"]
     data["weekday"] = data["weekday"].map(lambda x: weekday_names[x])
 
-    fig = px.bar(data, x="weekday", y="count",
-                 category_orders={"weekday": weekday_names})
+    fig = px.bar(
+        data,
+        x="weekday",
+        y="count",
+        category_orders={"weekday": weekday_names}
+    )
 
     showlegend = len(fig.data) > 1
 
     fig.update_layout(
         xaxis_title="Day of week",
         yaxis_title="Count",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
+
 
 def plot_datetime_heatmap(df, col, theme_cfg):
     base = _dt_index(df[col])
@@ -755,9 +476,11 @@ def plot_datetime_heatmap(df, col, theme_cfg):
         "hour": base.index.hour
     })
     df2["weekday_name"] = df2["weekday"].map(lambda d: weekday_names[d])
-    df2["weekday_name"] = pd.Categorical(df2["weekday_name"],
-                                         categories=weekday_names,
-                                         ordered=True)
+    df2["weekday_name"] = pd.Categorical(
+        df2["weekday_name"],
+        categories=weekday_names,
+        ordered=True
+    )
 
     heat = df2.groupby(["weekday_name", "hour"]).size().reset_index(name="count")
 
@@ -772,29 +495,11 @@ def plot_datetime_heatmap(df, col, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
+
 
 def plot_datetime_calendar(df, col, theme_cfg):
     base = _dt_index(df[col])
@@ -807,9 +512,11 @@ def plot_datetime_calendar(df, col, theme_cfg):
     weekday_names = list(calendar.day_name)
     df2["dow"] = pd.to_datetime(df2["date"]).dt.weekday
     df2["dow_name"] = df2["dow"].map(lambda d: weekday_names[d])
-    df2["dow_name"] = pd.Categorical(df2["dow_name"],
-                                     categories=weekday_names,
-                                     ordered=True)
+    df2["dow_name"] = pd.Categorical(
+        df2["dow_name"],
+        categories=weekday_names,
+        ordered=True
+    )
 
     df2["week"] = pd.to_datetime(df2["date"]).dt.isocalendar().week
 
@@ -824,28 +531,9 @@ def plot_datetime_calendar(df, col, theme_cfg):
 
     showlegend = len(fig.data) > 1
 
-    fig.update_layout(
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
-    )
+    fig.update_layout(**_base_layout(theme_cfg, showlegend=showlegend))
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
 
 
@@ -855,7 +543,6 @@ def plot_acf(df, col, theme_cfg, nlags=40):
         return None
 
     daily = base.resample("D").size()
-
     acf_vals = acf(daily, nlags=nlags, fft=True)
 
     fig = px.bar(x=list(range(len(acf_vals))), y=acf_vals)
@@ -865,28 +552,12 @@ def plot_acf(df, col, theme_cfg, nlags=40):
     fig.update_layout(
         xaxis_title="Lag",
         yaxis_title="ACF",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
+
 
 def plot_lag(df, col, theme_cfg, lag=1):
     base = _dt_index(df[col])
@@ -902,30 +573,18 @@ def plot_lag(df, col, theme_cfg, lag=1):
     showlegend = len(fig.data) > 1
 
     fig.update_layout(
-        xaxis_title=f"Value(t)",
+        xaxis_title="Value(t)",
         yaxis_title=f"Value(t+{lag})",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
+    fig.update_traces(
+        hoverlabel=_default_hoverlabel(),
+    )
+    if len(df) > 20000:
+        fig.update_traces(type="scattergl")
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
+
 
 def plot_month_day_heatmap(df, col, theme_cfg):
     base = _dt_index(df[col])
@@ -952,28 +611,12 @@ def plot_month_day_heatmap(df, col, theme_cfg):
     fig.update_layout(
         xaxis_title="Day",
         yaxis_title="Month",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
+
 
 def plot_interarrival(df, col, theme_cfg):
     base = _dt_index(df[col])
@@ -991,27 +634,10 @@ def plot_interarrival(df, col, theme_cfg):
     fig.update_layout(
         xaxis_title="Inter-arrival time (hours)",
         yaxis_title="Count",
-        width=500,
-        height=350,
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)", gridwidth=1),
-        **theme_cfg,
-        showlegend=showlegend,
-        legend=dict(
-            orientation="h",
-            x=0,
-            y=1.1,
-            xanchor="left",
-            yanchor="bottom"
-        ),
-        margin=dict(t=20, b=10, l=10, r=10)
+        **_base_layout(theme_cfg, showlegend=showlegend)
     )
+    fig.update_traces(hoverlabel=_default_hoverlabel())
 
-    fig.update_traces(hoverlabel=dict(
-        bgcolor="white",
-        bordercolor="rgba(0,0,0,0.15)",
-        font=dict(size=15, color="black")
-    ))
     return fig
 
 
@@ -1137,8 +763,37 @@ def visualizations(df, theme="light"):
     }}
 
     </script>
-    """
 
+    <!-- LAZY LOADING PARA VISUALIZATIONS -->
+    <script>
+    function loadPlotlyFigure(div) {{
+        const url = div.dataset.json;
+        if (!url || div.dataset.loaded === "1") return;
+
+        fetch(url)
+            .then(r => r.json())
+            .then(obj => {{
+                Plotly.newPlot(div.id, obj.data, obj.layout);
+                div.dataset.loaded = "1";
+            }});
+    }}
+
+    function lazyLoadViz() {{
+        const figs = document.querySelectorAll(".viz-fig");
+        const observer = new IntersectionObserver(entries => {{
+            entries.forEach(entry => {{
+                if (entry.isIntersecting) {{
+                    loadPlotlyFigure(entry.target);
+                }}
+            }});
+        }}, {{ rootMargin: "200px" }});
+
+        figs.forEach(fig => observer.observe(fig));
+    }}
+
+    document.addEventListener("DOMContentLoaded", lazyLoadViz);
+    </script>
+    """
     return html
 
 
@@ -1175,11 +830,14 @@ def generate_viz_html(df, vars, type, theme):
                 else:
                     continue
 
-            html_blocks.append(
-                "<div class='viz-item'>"
-                + fig.to_html(full_html=False, include_plotlyjs="cdn")
-                + "</div>"
-            )
+            json_path = f"viz_figs/{col}_{type}.json"
+            save_fig_json(fig, json_path)
+
+            html_blocks.append(f"""
+            <div class='viz-item'>
+                <div id="viz-{col}-{type}" class="viz-fig" data-json="{json_path}"></div>
+            </div>
+            """)
 
         return "".join(html_blocks)
 

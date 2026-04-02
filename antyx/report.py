@@ -11,7 +11,7 @@ from antyx.principals.overview import overview
 from antyx.utils.types import detect_var_type
 from antyx.utils.assets import embed_multiple_css
 from antyx.utils.data_loader import DataLoader
-
+from antyx.server.server import run_server
 
 class EDAReport:
     """
@@ -358,4 +358,9 @@ class EDAReport:
         print(f"Standalone HTML saved to: {output_path}")
 
         full_path = os.path.abspath(output_path)
-        webbrowser.open(f"file://{full_path}")
+
+
+        figs_dir = os.path.join(os.getcwd(), "figs")
+        static_dir = os.path.join(os.getcwd(), "antyx", "static")
+
+        run_server(full_path, figs_dir, static_dir)
